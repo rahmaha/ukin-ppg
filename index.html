@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PERMESINAN.gg — LMS Berpikir Komputasional (UKIN PPG)</title>
-    <!-- Tailwind CSS CDN -->
+    <title>PERMESINAN.gg — Peta Misi Berpikir Komputasional</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Fonts: Outfit, Plus Jakarta Sans & Fira Code -->
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="tailwind-config.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="react-gg-bg text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-400 selection:text-black">
@@ -19,31 +15,29 @@
     <header class="sticky top-0 z-40 w-full bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-3">
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
             
-            <!-- Brand Logo -->
-            <a href="#" onclick="switchView('roadmap')" class="flex flex-col leading-none tracking-tighter">
+            <a href="index.html" class="flex flex-col leading-none tracking-tighter">
                 <span class="font-display font-black text-xl sm:text-2xl text-white tracking-widest uppercase">
                     PERMESINAN<span class="text-amber-400">.gg</span>
                 </span>
                 <span class="text-[9px] font-mono text-slate-400 uppercase tracking-wider">BERPIKIR KOMPUTASIONAL • X TP</span>
             </a>
 
-            <!-- Navigation Tabs (Materi & LKM Dipisah) -->
+            <!-- Navigation Links across separate pages -->
             <nav class="flex items-center space-x-1 sm:space-x-2 bg-slate-900/90 p-1 rounded-2xl border border-slate-800 text-xs font-mono">
-                <button id="nav-btn-roadmap" onclick="switchView('roadmap')" class="px-3.5 py-1.5 rounded-xl font-bold bg-amber-400 text-slate-950 transition flex items-center space-x-1.5">
+                <a href="index.html" class="px-3.5 py-1.5 rounded-xl font-bold bg-amber-400 text-slate-950 transition flex items-center space-x-1.5">
                     <i data-lucide="map" class="w-4 h-4"></i>
                     <span>PETA MISI</span>
-                </button>
-                <button id="nav-btn-materi" onclick="switchView('materi')" class="px-3.5 py-1.5 rounded-xl font-bold text-slate-400 hover:text-white transition flex items-center space-x-1.5">
+                </a>
+                <a href="materi.html" class="px-3.5 py-1.5 rounded-xl font-bold text-slate-400 hover:text-white transition flex items-center space-x-1.5">
                     <i data-lucide="book-open" class="w-4 h-4"></i>
                     <span>MATERI DIGITAL</span>
-                </button>
-                <button id="nav-btn-lkm" onclick="switchView('lkm')" class="px-3.5 py-1.5 rounded-xl font-bold text-slate-400 hover:text-white transition flex items-center space-x-1.5">
+                </a>
+                <a href="lkm.html" class="px-3.5 py-1.5 rounded-xl font-bold text-slate-400 hover:text-white transition flex items-center space-x-1.5">
                     <i data-lucide="file-text" class="w-4 h-4"></i>
                     <span>LKM / LKPD</span>
-                </button>
+                </a>
             </nav>
 
-            <!-- RPP / Modul Ajar Button -->
             <button onclick="openRPPModal()" class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-amber-400/40 text-amber-300 hover:bg-slate-800 text-xs font-mono font-bold flex items-center space-x-2 transition">
                 <i data-lucide="file-check" class="w-4 h-4 text-amber-400"></i>
                 <span>📄 RPP / MODUL AJAR</span>
@@ -51,9 +45,8 @@
         </div>
     </header>
 
-    <!-- VIEW 1: ROADMAP (PETA MISI PBL) -->
-    <div id="view-roadmap" class="view-section flex-grow flex flex-col">
-        <!-- HERO LESSON INFO -->
+    <!-- MAIN ROADMAP PAGE -->
+    <div class="flex-grow flex flex-col">
         <section class="max-w-4xl mx-auto px-4 pt-8 pb-4 text-center space-y-3">
             <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-300 text-xs font-mono">
                 <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
@@ -79,7 +72,7 @@
             </div>
         </section>
 
-        <!-- MAIN ROADMAP CONTAINER -->
+        <!-- ROADMAP CONTAINER -->
         <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-4 relative overflow-hidden">
             <div class="relative min-h-[1750px] my-4" id="roadmap-section">
                 
@@ -170,9 +163,9 @@
                                     <h3 class="font-display text-xl font-bold text-white">4 Pilar Berpikir Komputasional</h3>
                                     <p class="text-xs text-slate-400 mt-1">Dekomposisi, Pola, Abstraksi & Algoritma.</p>
                                 </div>
-                                <button onclick="handleStageClick(3)" class="w-full py-3 px-4 bg-slate-800 text-slate-400 font-display font-extrabold text-xs rounded-xl shadow-lg transition">
-                                    STAGE TERKUNCI
-                                </button>
+                                <a href="materi.html" class="block w-full py-3 px-4 text-center bg-slate-800 text-slate-400 font-display font-extrabold text-xs rounded-xl shadow-lg transition">
+                                    BUKA MATERI DIGITAL →
+                                </a>
                             </div>
                         </div>
                         <div class="order-1 md:order-2 my-4 md:my-0 md:absolute md:left-1/2 md:-translate-x-1/2 md:top-12 z-20">
@@ -201,9 +194,9 @@
                                     <h3 class="font-display text-xl font-bold text-white">Tantangan Kelompok LKM</h3>
                                     <p class="text-xs text-slate-400 mt-1">Urutan Algoritma SOP & Seleksi Abstraksi.</p>
                                 </div>
-                                <button onclick="handleStageClick(4)" class="w-full py-3 px-4 bg-slate-800 text-slate-400 font-display font-extrabold text-xs rounded-xl shadow-lg transition">
-                                    STAGE TERKUNCI
-                                </button>
+                                <a href="lkm.html" class="block w-full py-3 px-4 text-center bg-slate-800 text-slate-400 font-display font-extrabold text-xs rounded-xl shadow-lg transition">
+                                    BUKA LEMBAR KERJA LKM →
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -238,53 +231,8 @@
         </main>
     </div>
 
-    <!-- VIEW 2: MATERI DIGITAL (HALAMAN TERPISAH) -->
-    <div id="view-materi" class="view-section hidden max-w-5xl w-full mx-auto px-4 py-8 space-y-8 flex-grow">
-        <div class="border-b border-slate-800 pb-4">
-            <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-400/10 text-amber-400 border border-amber-400/30 uppercase">MATERI PEMBELAJARAN</span>
-            <h2 class="font-display text-3xl font-black text-white mt-2">4 PILAR BERPIKIR KOMPUTASIONAL</h2>
-            <p class="text-xs text-slate-400 mt-1">Integrasi Computational Thinking pada Pembuatan Poros Bertingkat Teknik Permesinan.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="gg-card p-6 rounded-3xl border-t-4 border-emerald-400 space-y-3">
-                <div class="text-emerald-400 font-display font-extrabold text-xl">1. DEKOMPOSISI</div>
-                <p class="text-xs text-slate-300 leading-relaxed">Memecah pekerjaan poros bertingkat menjadi langkah-langkah kecil: Potong Bahan ➔ Cekam ➔ Facing ➔ Turning ➔ Ukur.</p>
-            </div>
-            <div class="gg-card p-6 rounded-3xl border-t-4 border-cyan-400 space-y-3">
-                <div class="text-cyan-400 font-display font-extrabold text-xl">2. PENGENALAN POLA</div>
-                <p class="text-xs text-slate-300 leading-relaxed">Mengenali alur kerja sejenis antara pembuatan poros bertingkat dan pembuatan baut industri.</p>
-            </div>
-            <div class="gg-card p-6 rounded-3xl border-t-4 border-amber-400 space-y-3">
-                <div class="text-amber-400 font-display font-extrabold text-xl">3. ABSTRAKSI</div>
-                <p class="text-xs text-slate-300 leading-relaxed">Fokus hanya pada variabel kritis (diameter, panjang, toleransi) dan mengabaikan atribut irrelevant (warna cat mesin).</p>
-            </div>
-            <div class="gg-card p-6 rounded-3xl border-t-4 border-pink-400 space-y-3">
-                <div class="text-pink-400 font-display font-extrabold text-xl">4. ALGORITMA SOP</div>
-                <p class="text-xs text-slate-300 leading-relaxed">Menyusun urutan langkah pengerjaan yang logis, aman K3LH, dan terstruktur secara baku.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- VIEW 3: LKM / LKPD INTERAKTIF (HALAMAN TERPISAH) -->
-    <div id="view-lkm" class="view-section hidden max-w-5xl w-full mx-auto px-4 py-8 space-y-8 flex-grow">
-        <div class="border-b border-slate-800 pb-4">
-            <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-400/10 text-cyan-400 border border-cyan-400/30 uppercase">LEMBAR KERJA PESERTA DIDIK</span>
-            <h2 class="font-display text-3xl font-black text-white mt-2">LKM TANTANGAN KELOMPOK</h2>
-            <p class="text-xs text-slate-400 mt-1">Penyelidikan & Perancangan Algoritma Pembuatan Poros Bertingkat.</p>
-        </div>
-
-        <div class="gg-card p-6 rounded-3xl space-y-4">
-            <h3 class="font-display font-bold text-lg text-white">SOP ALGORITMA PERMESINAN</h3>
-            <p class="text-xs text-slate-400">Susun langkah kerja secara runtut dan presisi sesuai standar bengkel.</p>
-            <button onclick="showToast('Data LKM Disimpan!')" class="px-6 py-3 bg-amber-400 text-slate-950 font-bold rounded-xl text-xs">SIMPAN HASIL LKM</button>
-        </div>
-    </div>
-
-    <!-- FULLSCREEN PRESENTATION SLIDE OVERLAY (MATCHES SCREENSHOT) -->
+    <!-- FULLSCREEN PRESENTATION SLIDE OVERLAY (STAGE FULLSCREEN) -->
     <div id="stage-fullscreen" class="fixed inset-0 z-50 flex flex-col bg-[#090a0f] hidden overflow-hidden">
-        
-        <!-- SLIDE TOP BAR -->
         <div class="flex items-center justify-between px-6 py-3 border-b border-slate-800/80 bg-slate-950/90 z-20">
             <div class="flex items-center space-x-4">
                 <button onclick="closeFullscreenSlide()" class="px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:text-white font-mono text-xs font-bold transition flex items-center space-x-1.5">
@@ -293,7 +241,6 @@
                 <h2 id="slide-stage-title" class="font-display font-bold text-white text-sm sm:text-base">Level 1: Misi</h2>
             </div>
 
-            <!-- Timer Controls -->
             <div id="slide-timer-box" class="flex items-center space-x-3">
                 <span id="slide-timer-val" class="font-display font-extrabold text-lg text-white font-mono tracking-wider">10:00</span>
                 <button id="slide-timer-btn" onclick="toggleSlideTimer()" class="px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-slate-200 hover:border-amber-400 transition">
@@ -302,29 +249,20 @@
             </div>
         </div>
 
-        <!-- SEGMENTED PROGRESS BARS (TOP BARS) -->
-        <div class="w-full px-6 pt-3 pb-1 flex gap-2 bg-[#090a0f] z-20" id="slide-segmented-progress">
-            <!-- Dynamic Segments Injected via JS -->
-        </div>
+        <div class="w-full px-6 pt-3 pb-1 flex gap-2 bg-[#090a0f] z-20" id="slide-segmented-progress"></div>
+        <div class="flex-grow overflow-y-auto px-6 py-8 flex flex-col items-center justify-center relative z-10" id="slide-viewport"></div>
 
-        <!-- SLIDE CONTENT VIEWPORT -->
-        <div class="flex-grow overflow-y-auto px-6 py-8 flex flex-col items-center justify-center relative z-10" id="slide-viewport">
-            <!-- Dynamic Slide Page Injected via JS -->
-        </div>
-
-        <!-- SLIDE BOTTOM BAR -->
         <div class="flex items-center justify-between px-6 py-4 border-t border-slate-800/80 bg-slate-950/90 z-20">
             <button id="btn-slide-prev" onclick="prevSubSlide()" class="px-5 py-2.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 text-xs font-bold transition flex items-center space-x-2">
                 <span>← Kembali</span>
             </button>
-
             <button id="btn-slide-next" onclick="nextSubSlide()" class="px-6 py-2.5 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-display font-extrabold text-xs transition flex items-center space-x-2 glow-yellow">
                 <span>Lanjut ke level 2 →</span>
             </button>
         </div>
     </div>
 
-    <!-- RPP / MODUL AJAR MODAL VIEWER -->
+    <!-- RPP MODAL -->
     <div id="rpp-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
         <div class="absolute inset-0 bg-slate-950/85 backdrop-blur-md" onclick="closeRPPModal()"></div>
         <div class="relative w-full max-w-4xl bg-slate-900 border border-amber-400/40 rounded-3xl p-6 overflow-y-auto max-h-[90vh] z-10 space-y-4 text-xs">
@@ -363,7 +301,6 @@
         </div>
     </div>
 
-    <!-- EXTERNAL SCRIPT -->
     <script src="script.js"></script>
 </body>
 </html>

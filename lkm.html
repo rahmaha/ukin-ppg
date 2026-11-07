@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PERMESINAN.gg — Lembar Kerja Peserta Didik (LKM)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="react-gg-bg text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-400 selection:text-black">
+
+    <!-- TOP NAVBAR -->
+    <header class="sticky top-0 z-40 w-full bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            
+            <a href="index.html" class="flex flex-col leading-none tracking-tighter">
+                <span class="font-display font-black text-xl sm:text-2xl text-white tracking-widest uppercase">
+                    PERMESINAN<span class="text-amber-400">.gg</span>
+                </span>
+                <span class="text-[9px] font-mono text-slate-400 uppercase tracking-wider">BERPIKIR KOMPUTASIONAL • X TP</span>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="flex items-center space-x-1 sm:space-x-2 bg-slate-900/90 p-1 rounded-2xl border border-slate-800 text-xs font-mono">
+                <a href="index.html" class="px-3.5 py-1.5 rounded-xl font-bold text-slate-400 hover:text-white transition flex items-center space-x-1.5">
+                    <i data-lucide="map" class="w-4 h-4"></i>
+                    <span>PETA MISI</span>
+                </a>
+                <a href="materi.html" class="px-3.5 py-1.5 rounded-xl font-bold text-slate-400 hover:text-white transition flex items-center space-x-1.5">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span>MATERI DIGITAL</span>
+                </a>
+                <a href="lkm.html" class="px-3.5 py-1.5 rounded-xl font-bold bg-amber-400 text-slate-950 transition flex items-center space-x-1.5">
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                    <span>LKM / LKPD</span>
+                </a>
+            </nav>
+
+            <a href="index.html" class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800 text-xs font-mono font-bold flex items-center space-2 transition">
+                <i data-lucide="arrow-left" class="w-4 h-4 text-amber-400"></i>
+                <span>KEMBALI KE PETA</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- MAIN LKM PAGE -->
+    <main class="max-w-5xl w-full mx-auto px-4 py-8 space-y-8 flex-grow">
+        <!-- Header Section -->
+        <div class="border-b border-slate-800 pb-4">
+            <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-pink-400/10 text-pink-400 border border-pink-400/30 uppercase">
+                LEMBAR KERJA PESERTA DIDIK (LKPD) KELOMPOK
+            </span>
+            <h2 class="font-display text-3xl font-black text-white mt-2">STAGE 04 • TANTANGAN LKM PERMESINAN</h2>
+            <p class="text-xs text-slate-400 mt-1">Penyelidikan Kasus & Perancangan Algoritma SOP Pembuatan Poros Bertingkat.</p>
+        </div>
+
+        <!-- Identitas Kelompok Card -->
+        <div class="gg-card p-6 rounded-3xl space-y-4 border border-slate-800">
+            <h3 class="font-display font-bold text-base text-amber-400 uppercase font-mono flex items-center space-x-2">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                <span>1. IDENTITAS KELOMPOK KERJA</span>
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
+                <div>
+                    <label class="block text-slate-400 mb-1">Nama Kelompok:</label>
+                    <input type="text" placeholder="Contoh: Tim CNC 01" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-amber-400 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Nama Ketua / Anggota:</label>
+                    <input type="text" placeholder="Rina, Arif, Budi..." class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-amber-400 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Kelas / Jurusan:</label>
+                    <input type="text" value="X Teknik Pemesinan (TP 1)" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-amber-400 focus:outline-none">
+                </div>
+            </div>
+        </div>
+
+        <!-- AKTIVITAS 1: DEKOMPOSISI -->
+        <div class="gg-card p-6 rounded-3xl space-y-4 border border-emerald-400/30">
+            <h3 class="font-display font-bold text-base text-emerald-400 uppercase font-mono flex items-center space-x-2">
+                <i data-lucide="scissors" class="w-4 h-4"></i>
+                <span>2. DEKOMPOSISI PEMBUATAN POROS BERTINGKAT</span>
+            </h3>
+            <p class="text-xs text-slate-300">
+                Pecah tahapan kompleks pembuatan 50 unit poros bertingkat baja menjadi 4 sub-tahapan kecil yang lebih mudah dikelola:
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <span class="font-bold text-emerald-400 font-mono block">Tahap A: Persiapan Bahan & Alat</span>
+                    <input type="text" placeholder="Contoh: Pemotongan gergaji mesin St.42 diameter 32mm..." class="w-full mt-2 p-2 bg-slate-900 rounded-lg text-slate-200 border border-slate-800 text-[11px]">
+                </div>
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <span class="font-bold text-emerald-400 font-mono block">Tahap B: Pencekaman & Pembubutan Muka</span>
+                    <input type="text" placeholder="Contoh: Cecekam pada chuck 3 rahang, ratakan muka..." class="w-full mt-2 p-2 bg-slate-900 rounded-lg text-slate-200 border border-slate-800 text-[11px]">
+                </div>
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <span class="font-bold text-emerald-400 font-mono block">Tahap C: Pembubutan Bertingkat</span>
+                    <input type="text" placeholder="Contoh: Bubut bertingkat Ø25mm & Ø20mm..." class="w-full mt-2 p-2 bg-slate-900 rounded-lg text-slate-200 border border-slate-800 text-[11px]">
+                </div>
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <span class="font-bold text-emerald-400 font-mono block">Tahap D: Pengukuran & Quality Control</span>
+                    <input type="text" placeholder="Contoh: Ukur panjang & diameter dengan vernier calliper..." class="w-full mt-2 p-2 bg-slate-900 rounded-lg text-slate-200 border border-slate-800 text-[11px]">
+                </div>
+            </div>
+        </div>
+
+        <!-- AKTIVITAS 2: ABSTRAKSI INVENTARIS & SPESIFIKASI -->
+        <div class="gg-card p-6 rounded-3xl space-y-4 border border-amber-400/30">
+            <h3 class="font-display font-bold text-base text-amber-400 uppercase font-mono flex items-center space-x-2">
+                <i data-lucide="filter" class="w-4 h-4"></i>
+                <span>3. ABSTRAKSI: SELEKSI DATA RELEVAN (KASUS BENGKEL)</span>
+            </h3>
+            <p class="text-xs text-slate-300">
+                Dari daftar perlengkapan berikut, pilih data yang **RELEVAN** untuk proses pembubutan presisi dan centang data yang harus **DIABAIKAN**:
+            </p>
+            <div class="space-y-2 text-xs font-mono">
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+                    <span>1. Toleransi Ukuran Diameter ±0.05 mm</span>
+                    <span class="px-3 py-1 bg-emerald-400/20 text-emerald-400 rounded-lg font-bold border border-emerald-400/40">✔ SANGAT RELEVAN</span>
+                </div>
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+                    <span>2. Warna Cat Body Mesin Bubut (Hijau/Biru)</span>
+                    <span class="px-3 py-1 bg-rose-400/20 text-rose-400 rounded-lg font-bold border border-rose-400/40">✖ DIABAIKAN</span>
+                </div>
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+                    <span>3. Kecepatan Putar Spindle (RPM) & Kecepatan Pemakanan</span>
+                    <span class="px-3 py-1 bg-emerald-400/20 text-emerald-400 rounded-lg font-bold border border-emerald-400/40">✔ SANGAT RELEVAN</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- AKTIVITAS 3: ALGORITMA SOP PERMESINAN -->
+        <div class="gg-card p-6 rounded-3xl space-y-4 border border-pink-400/30">
+            <h3 class="font-display font-bold text-base text-pink-400 uppercase font-mono flex items-center space-x-2">
+                <i data-lucide="workflow" class="w-4 h-4"></i>
+                <span>4. PENYUSUNAN ALGORITMA SOP KERJA</span>
+            </h3>
+            <p class="text-xs text-slate-300">
+                Susun langkah-langkah SOP pembubutan secara runtut agar aman (K3LH) dan hasil benda kerja sesuai job sheet:
+            </p>
+            <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-2 text-xs font-mono">
+                <div class="flex items-center space-x-3">
+                    <span class="w-6 h-6 rounded-full bg-pink-400 text-slate-950 font-bold flex items-center justify-center">1</span>
+                    <span class="text-slate-200">Gunakan APD Lengkap (Kacamata Safety, Pakaian Kerja, Sepatu Safety).</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="w-6 h-6 rounded-full bg-pink-400 text-slate-950 font-bold flex items-center justify-center">2</span>
+                    <span class="text-slate-200">Siapkan Bahan Bakal Benda Kerja St.42 dan Kunci Chuck.</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="w-6 h-6 rounded-full bg-pink-400 text-slate-950 font-bold flex items-center justify-center">3</span>
+                    <span class="text-slate-200">Cekam Benda Kerja Presisi dan Atur Pahat Bubut Setinggi Senter.</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="w-6 h-6 rounded-full bg-pink-400 text-slate-950 font-bold flex items-center justify-center">4</span>
+                    <span class="text-slate-200">Nyalakan Spindle, Lakukan Pembubutan Muka (Facing) dan Pembubutan Bertingkat.</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="w-6 h-6 rounded-full bg-pink-400 text-slate-950 font-bold flex items-center justify-center">5</span>
+                    <span class="text-slate-200">Matikan Mesin, Ukur dengan Jangka Sorong, Lepas Benda Kerja & Bersihkan Tatal Mesin.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submission Buttons -->
+        <div class="pt-4 flex flex-wrap justify-between items-center gap-4">
+            <a href="materi.html" class="px-5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white font-mono text-xs font-bold transition">
+                ← Buka Kembali Materi Digital
+            </a>
+            <button onclick="saveLKMResults()" class="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-display font-extrabold text-xs transition shadow-lg glow-yellow flex items-center space-x-2">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>SIMPAN & KIRIM JAWABAN LKM</span>
+            </button>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        function saveLKMResults() {
+            showToast("Hasil LKM Kelompok Berhasil Disimpan!");
+        }
+    </script>
+</body>
+</html>

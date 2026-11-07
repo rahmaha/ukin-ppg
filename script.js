@@ -1,6 +1,7 @@
 let currentStage = 1;
 let currentSubSlideIndex = 0;
-let unlockedStages = new Set([1]); // Stage 1 Terbuka Awal
+let currentMateriSlideIndex = 0; // State slide deck halaman materi
+let unlockedStages = new Set([1]);
 let currentCarDistance = 0;
 let animReqId = null;
 let timerInterval = null;
@@ -25,7 +26,169 @@ const shaftSVG = n => `
     </svg>
 `;
 
-// PRESENTATION SLIDES DATA STRUCTURE (PERFECT MATCH SCREENSHOT & CONTENT)
+/* =========================================================================
+   MATERI DIGITAL SLIDE DECK DATA (EXTRACTED FROM CT_Rusli.pptx)
+   ========================================================================= */
+const materiDeckData = [
+    {
+        topic: "BAB 1 • KONSEP BERPIKIR KOMPUTASIONAL",
+        badge: "SLIDE 1 DARI 6",
+        title: "Pengertian Berpikir Komputasional",
+        subtitle: "Computational Thinking (CT) dalam Kehidupan & Teknologi",
+        content: `
+            <div class="space-y-4 max-w-3xl mx-auto text-center animate-fade-in">
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    <strong>Berpikir Komputasional (Computational Thinking)</strong> adalah konsep menemukan masalah di sekitar kita, memahaminya, kemudian mengembangkan solusi yang inovatif dengan bantuan perangkat teknologi komputer.
+                </p>
+                <div class="p-4 bg-slate-950 rounded-2xl border border-amber-400/30 text-amber-300 text-xs font-mono">
+                    💡 Berpikir komputasional memungkinkan kita menyelesaikan masalah yang sangat kompleks secara sistematis.
+                </div>
+                <div class="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+                    <div class="p-3 bg-slate-900 rounded-xl border border-emerald-400/40 text-emerald-300">1. Dekomposisi</div>
+                    <div class="p-3 bg-slate-900 rounded-xl border border-cyan-400/40 text-cyan-300">2. Pengenalan Pola</div>
+                    <div class="p-3 bg-slate-900 rounded-xl border border-amber-400/40 text-amber-300">3. Abstraksi</div>
+                    <div class="p-3 bg-slate-900 rounded-xl border border-pink-400/40 text-pink-300">4. Algoritma</div>
+                </div>
+            </div>
+        `
+    },
+    {
+        topic: "PILAR 1 • DEKOMPOSISI",
+        badge: "SLIDE 2 DARI 6",
+        title: "Dekomposisi (Divide and Conquer)",
+        subtitle: "Memecah Masalah Kompleks Menjadi Bagian-Bagian Kecil",
+        content: `
+            <div class="space-y-4 max-w-3xl mx-auto text-left animate-fade-in text-xs">
+                <p class="text-slate-300">
+                    <strong>Dekomposisi</strong> adalah pendekatan dengan memecah masalah besar dan kompleks menjadi masalah-masalah yang lebih kecil dan lebih sederhana sehingga lebih mudah dikelola, dipahami, dan dicari solusinya (disebut juga <em>"Divide and Conquer"</em>).
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-emerald-400/40 space-y-2">
+                        <div class="font-bold text-emerald-400 font-mono">🚲 Contoh Troubleshoot Sepeda:</div>
+                        <ul class="list-disc list-inside text-slate-400 space-y-1 text-[11px]">
+                            <li>Apa penyebab bunyi "tak tak tak"?</li>
+                            <li>Bagian mana yang bergerak & jadi sumber bunyi?</li>
+                            <li>Bagaimana cara memeriksa & memperbaiki?</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-2">
+                        <div class="font-bold text-amber-400 font-mono">🧪 Contoh Sintesis Kimia Industri:</div>
+                        <ul class="list-disc list-inside text-slate-400 space-y-1 text-[11px]">
+                            <li>Persiapan Bahan Baku</li>
+                            <li>Kondisi Reaksi Kimia (suhu & tekanan)</li>
+                            <li>Pemurnian Produk & Pengendalian Kualitas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    {
+        topic: "PILAR 2 • PENGENALAN POLA",
+        badge: "SLIDE 3 DARI 6",
+        title: "Pengenalan Pola (Pattern Recognition)",
+        subtitle: "Melihat Kesamaan Pola & Karakteristik Permasalahan",
+        content: `
+            <div class="space-y-4 max-w-3xl mx-auto text-left animate-fade-in text-xs">
+                <p class="text-slate-300">
+                    Melihat kesamaan pola atau karakteristik tertentu dari suatu permasalahan. Masalah dengan karakteristik sama memberikan peluang untuk menggunakan solusi yang sama.
+                </p>
+                <div class="p-4 bg-slate-950 rounded-2xl border border-cyan-400/40 space-y-3">
+                    <div class="font-bold text-cyan-400 font-mono">🥼 Kasus Titrasi Kimia Rina (HCl + NaOH):</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+                        <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
+                            <span class="text-rose-400 font-bold block">Percobaan 1:</span>
+                            Tetesan cepat ➔ Merah muda pekat (Gagal/lewat ekuivalen).
+                        </div>
+                        <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
+                            <span class="text-amber-400 font-bold block">Percobaan 2:</span>
+                            Tetes lambat tanpa adukan ➔ Reaksi tidak merata (Gagal).
+                        </div>
+                        <div class="p-2.5 bg-slate-900 rounded-xl border border-emerald-400/40 text-emerald-300 font-semibold">
+                            <span class="text-emerald-400 font-bold block">Percobaan 3 (Berhasil):</span>
+                            Tetes pelan + goyangan konstan ➔ Merah muda pucat stabil 24.8 mL.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    {
+        topic: "PILAR 3 • ABSTRAKSI",
+        badge: "SLIDE 4 DARI 6",
+        title: "Abstraksi (Abstraction)",
+        subtitle: "Memilih Informasi Penting & Mengabaikan Detail Tidak Relevan",
+        content: `
+            <div class="space-y-4 max-w-3xl mx-auto text-left animate-fade-in text-xs">
+                <p class="text-slate-300">
+                    <strong>Abstraksi</strong> adalah teknik memfokuskan perhatian pada informasi yang berguna dan relevan serta menyaring atau mengabaikan detail-detail yang tidak penting.
+                </p>
+                <div class="p-4 bg-slate-950 rounded-2xl border border-amber-400/40 space-y-3">
+                    <div class="font-bold text-amber-400 font-mono">🛠️ Kasus Inventaris Bengkel Arif:</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
+                        <div class="p-3 bg-slate-900 rounded-xl border border-emerald-500/30">
+                            <span class="text-emerald-400 font-bold block mb-1">✔ Disimpan (Inti Relevan):</span>
+                            Oli A (15 pcs, Rp60rb), Busi B (10 pcs, Rp22rb), Ban C (5 pcs, Rp160rb).
+                        </div>
+                        <div class="p-3 bg-slate-900 rounded-xl border border-rose-500/30">
+                            <span class="text-rose-400 font-bold block mb-1">✖ Diabaikan (Detail Tidak Penting):</span>
+                            Warna botol oli, cap tanggal busi, pembungkus plastik ban, poster kusut.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    {
+        topic: "PILAR 4 • ALGORITMA",
+        badge: "SLIDE 5 DARI 6",
+        title: "Algoritma (Flowchart & Pseudocode)",
+        subtitle: "Mengembangkan Langkah Instruksi Logis & Terstruktur",
+        content: `
+            <div class="space-y-4 max-w-3xl mx-auto text-left animate-fade-in text-xs">
+                <p class="text-slate-300">
+                    <strong>Algoritma</strong> adalah langkah-langkah atau aturan baku yang harus dipenuhi untuk memecah masalah secara terstruktur. Algoritma disajikan melalui 2 cara utama:
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-purple-400/40 space-y-2">
+                        <div class="font-bold text-purple-400 font-mono">📊 Flowchart (Diagram Alir):</div>
+                        <p class="text-slate-400 text-[11px]">Diagram mewakili simbol standar: Oval (Start/Stop), Persegi Panjang (Proses), Belah Ketupat (Keputusan), Jajaran Genjang (Input/Output).</p>
+                    </div>
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-pink-400/40 space-y-2">
+                        <div class="font-bold text-pink-400 font-mono">📝 Pseudocode:</div>
+                        <p class="text-slate-400 text-[11px]">Rangkaian instruksi berbentuk kode baku. Perintah ditulis huruf KAPITAL (INPUT, OUTPUT, STORE, IF-THEN), dan variabel huruf kecil.</p>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    {
+        topic: "TAHAP AKHIR • EVALUASI SOLUSI",
+        badge: "SLIDE 6 DARI 6",
+        title: "Mengevaluasi Solusi & Dry Run",
+        subtitle: "Memastikan Solusi Bekerja Efisien, Lengkap, dan Tepat",
+        content: `
+            <div class="space-y-4 max-w-3xl mx-auto text-left animate-fade-in text-xs">
+                <p class="text-slate-300">
+                    Evaluasi dilakukan untuk memastikan solusi dapat bekerja dengan baik serta melihat kemungkinan peningkatan efisiensi.
+                </p>
+                <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="font-bold text-emerald-400 font-mono">🔍 Kriteria Uji Solusi (Teknik Dry Run):</div>
+                    <p class="text-slate-400 text-[11px]">
+                        <em>Dry run</em> dilakukan dengan menelusuri langkah demi langkah menggunakan 3 kriteria input berbeda:
+                    </p>
+                    <div class="grid grid-cols-3 gap-2 text-center font-mono text-[10px]">
+                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-700 text-slate-300">1. Input Normal</div>
+                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-700 text-amber-300">2. Input Batas</div>
+                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-700 text-rose-300">3. Input Ekstrem</div>
+                    </div>
+                </div>
+            </div>
+        `
+    }
+];
+
+/* PRESENTATION STAGE SLIDES DATA STRUCTURE FOR INDEX.HTML */
 const stageSlides = {
     1: {
         title: "Level 1: Misi",
@@ -103,45 +266,33 @@ const stageSlides = {
         hasTimer: false,
         slides: [
             {
-                subtitle: "LEVEL 3 • MATERI UTAMA",
+                subtitle: "LEVEL 3 • EKSPLORASI MATERI",
                 heading: "Empat Pilar Berpikir Komputasional",
                 body: `
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-4xl text-left">
-                        <div class="p-5 bg-slate-950 rounded-2xl border-t-4 border-emerald-400">
-                            <b class="text-emerald-400 font-display text-base">Dekomposisi</b>
-                            <p class="text-xs text-slate-400 mt-1">Memecah job sheet menjadi potongan tahap potong, cekam, bubut, ukur.</p>
-                        </div>
-                        <div class="p-5 bg-slate-950 rounded-2xl border-t-4 border-cyan-400">
-                            <b class="text-cyan-400 font-display text-base">Pengenalan Pola</b>
-                            <p class="text-xs text-slate-400 mt-1">Poros & baut punya alur dasar sama, beda di pembuat ulir.</p>
-                        </div>
-                        <div class="p-5 bg-slate-950 rounded-2xl border-t-4 border-amber-400">
-                            <b class="text-amber-400 font-display text-base">Abstraksi</b>
-                            <p class="text-xs text-slate-400 mt-1">Fokus pada diameter & toleransi, abaikan warna cet mesin.</p>
-                        </div>
-                        <div class="p-5 bg-slate-950 rounded-2xl border-t-4 border-pink-400">
-                            <b class="text-pink-400 font-display text-base">Algoritma SOP</b>
-                            <p class="text-xs text-slate-400 mt-1">Menyusun urutan langkah pengerjaan yang logis & K3LH.</p>
-                        </div>
+                    <div class="space-y-4 text-center max-w-xl mx-auto">
+                        <p class="text-xs text-slate-300">Klik tombol di bawah ini untuk membuka Slide Presentasi Materi Digital terpisah.</p>
+                        <a href="materi.html" class="inline-block px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-display font-extrabold text-xs glow-yellow">
+                            BUKA MATERI DIGITAL SLIDE DECK →
+                        </a>
                     </div>
                 `
             }
         ]
     },
     4: {
-        title: "Level 4: LKM",
+        title: "Level 4: LKM Kelompok",
         minutes: 30,
         hasTimer: true,
         slides: [
             {
                 subtitle: "LEVEL 4 • TANTANGAN KELOMPOK",
                 heading: "SOP Algoritma Poros Bertingkat",
-                lead: "Susun tahap pembuatan poros bertingkat dengan urutan yang benar.",
+                lead: "Buka Lembar Kerja Peserta Didik (LKPD) terpisah untuk mengisi tantangan kelompok.",
                 body: `
-                    <div class="gg-card p-6 rounded-3xl max-w-2xl mx-auto space-y-4 text-left">
-                        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-amber-300">
-                            1. Potong Bahan ➔ 2. Pasang di Chuck ➔ 3. Bubut Muka ➔ 4. Bubut Bertingkat ➔ 5. Ukur Jangka Sorong
-                        </div>
+                    <div class="space-y-4 text-center max-w-xl mx-auto">
+                        <a href="lkm.html" class="inline-block px-6 py-3 rounded-xl bg-pink-400 hover:bg-pink-300 text-slate-950 font-display font-extrabold text-xs glow-pink">
+                            BUKA LEMBAR KERJA PESERTA DIDIK (LKM) →
+                        </a>
                     </div>
                 `
             }
@@ -170,25 +321,91 @@ const stageSlides = {
 };
 
 window.onload = function() {
-    lucide.createIcons();
-    initSVGDistances();
-    updateLockVisuals();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    if (document.getElementById('winding-path')) {
+        initSVGDistances();
+        updateLockVisuals();
+    }
 };
 
-function switchView(viewName) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-    document.getElementById(`view-${viewName}`).classList.remove('hidden');
+/* =========================================================================
+   MATERI DIGITAL SLIDE CONTROLLER LOGIC (FOR MATERI.HTML)
+   ========================================================================= */
+function renderMateriDeckSlide() {
+    const slide = materiDeckData[currentMateriSlideIndex];
+    if (!slide) return;
 
-    ['roadmap', 'materi', 'lkm'].forEach(name => {
-        const btn = document.getElementById(`nav-btn-${name}`);
-        if (name === viewName) {
-            btn.className = "px-3.5 py-1.5 rounded-xl font-bold bg-amber-400 text-slate-950 transition flex items-center space-x-1.5";
+    const badgeEl = document.getElementById('materi-slide-badge');
+    const topicEl = document.getElementById('materi-slide-topic');
+    const viewport = document.getElementById('materi-viewport');
+
+    if (!viewport) return;
+
+    if (badgeEl) badgeEl.innerText = slide.badge;
+    if (topicEl) topicEl.innerText = slide.topic;
+
+    viewport.innerHTML = `
+        <div class="space-y-4 text-center animate-fade-in">
+            <h3 class="font-display font-black text-2xl sm:text-4xl text-white tracking-tight">${slide.title}</h3>
+            <p class="text-amber-400 font-mono text-xs sm:text-sm font-semibold">${slide.subtitle}</p>
+            ${slide.content}
+        </div>
+    `;
+
+    const dotsBox = document.getElementById('materi-dots-indicator');
+    if (dotsBox) {
+        dotsBox.innerHTML = materiDeckData.map((_, i) => `
+            <button onclick="goToMateriDeckSlide(${i})" class="w-2.5 h-2.5 rounded-full transition-all ${i === currentMateriSlideIndex ? 'bg-amber-400 w-6' : 'bg-slate-700 hover:bg-slate-500'}"></button>
+        `).join("");
+    }
+
+    const btnPrev = document.getElementById('btn-materi-prev');
+    const btnNext = document.getElementById('btn-materi-next');
+
+    if (btnPrev) {
+        btnPrev.disabled = (currentMateriSlideIndex === 0);
+        btnPrev.style.opacity = (currentMateriSlideIndex === 0) ? "0.4" : "1";
+    }
+
+    if (btnNext) {
+        btnNext.disabled = (currentMateriSlideIndex === materiDeckData.length - 1);
+        btnNext.style.opacity = (currentMateriSlideIndex === materiDeckData.length - 1) ? "0.4" : "1";
+    }
+
+    const tabs = document.querySelectorAll('.materi-tab-btn');
+    tabs.forEach((tab, idx) => {
+        if (idx === currentMateriSlideIndex) {
+            tab.className = "materi-tab-btn px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 font-bold transition";
         } else {
-            btn.className = "px-3.5 py-1.5 rounded-xl font-bold text-slate-400 hover:text-white transition flex items-center space-x-1.5";
+            tab.className = "materi-tab-btn px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition";
         }
     });
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
+function nextMateriDeckSlide() {
+    if (currentMateriSlideIndex < materiDeckData.length - 1) {
+        currentMateriSlideIndex++;
+        renderMateriDeckSlide();
+    }
+}
+
+function prevMateriDeckSlide() {
+    if (currentMateriSlideIndex > 0) {
+        currentMateriSlideIndex--;
+        renderMateriDeckSlide();
+    }
+}
+
+function goToMateriDeckSlide(index) {
+    currentMateriSlideIndex = index;
+    renderMateriDeckSlide();
+}
+
+/* =========================================================================
+   ROADMAP INTERACTION LOGIC (FOR INDEX.HTML)
+   ========================================================================= */
 function handleStageClick(stageNum) {
     if (!unlockedStages.has(stageNum)) {
         showToast(`🔒 Stage 0${stageNum} Terkunci! Selesaikan Stage 0${stageNum - 1} terlebih dahulu.`);
@@ -197,14 +414,14 @@ function handleStageClick(stageNum) {
     currentStage = stageNum;
     currentSubSlideIndex = 0;
     animateCarToDistance(nodeDistances[stageNum], 1100);
-    document.getElementById('current-car-stage-label').innerText = `Stage 0${stageNum}`;
+    const label = document.getElementById('current-car-stage-label');
+    if (label) label.innerText = `Stage 0${stageNum}`;
 
     setTimeout(() => {
         openFullscreenSlide(stageNum);
     }, 1000);
 }
 
-/* FULLSCREEN PRESENTATION SLIDE ENGINE */
 function openFullscreenSlide(stageNum) {
     const stageData = stageSlides[stageNum];
     if (!stageData) return;
@@ -229,13 +446,11 @@ function renderSubSlide() {
     const slides = stageData.slides;
     const currentSlide = slides[currentSubSlideIndex];
 
-    // Segmented Progress Bar rendering (Match screenshot top green bars)
     const segBox = document.getElementById('slide-segmented-progress');
     segBox.innerHTML = slides.map((_, i) => `
         <div class="h-1.5 flex-1 rounded-full transition-all duration-300 ${i <= currentSubSlideIndex ? 'bg-emerald-400 shadow-[0_0_10px_#10b981]' : 'bg-slate-800'}"></div>
     `).join("");
 
-    // Slide Content rendering
     const viewport = document.getElementById('slide-viewport');
     viewport.innerHTML = `
         <div class="slide-content text-center max-w-4xl mx-auto space-y-4 animate-fade-in">
@@ -246,7 +461,6 @@ function renderSubSlide() {
         </div>
     `;
 
-    // Update Bottom Nav Buttons
     const btnPrev = document.getElementById('btn-slide-prev');
     const btnNext = document.getElementById('btn-slide-next');
 
@@ -263,7 +477,7 @@ function renderSubSlide() {
         }
     }
 
-    lucide.createIcons();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function nextSubSlide() {
@@ -272,7 +486,6 @@ function nextSubSlide() {
         currentSubSlideIndex++;
         renderSubSlide();
     } else {
-        // Unlock next stage
         const nextStage = currentStage + 1;
         if (nextStage <= 5) {
             unlockedStages.add(nextStage);
@@ -320,7 +533,8 @@ function toggleSlideTimer() {
 function updateTimerDisplay() {
     const m = String(Math.floor(timerSecondsLeft / 60)).padStart(2, '0');
     const s = String(timerSecondsLeft % 60).padStart(2, '0');
-    document.getElementById('slide-timer-val').innerText = `${m}:${s}`;
+    const el = document.getElementById('slide-timer-val');
+    if (el) el.innerText = `${m}:${s}`;
 }
 
 function updateLockVisuals() {
@@ -330,18 +544,28 @@ function updateLockVisuals() {
         const badge = document.getElementById(`badge-lock-${i}`);
 
         if (unlockedStages.has(i)) {
-            btn.className = "w-16 h-16 rounded-full bg-slate-950 border-4 border-amber-400 text-amber-400 font-display font-black text-xl flex items-center justify-center shadow-2xl glow-yellow transform hover:scale-110 transition cursor-pointer opacity-100";
-            btn.innerText = `0${i}`;
-            card.classList.remove('opacity-60', 'border-slate-800');
-            card.classList.add('border-amber-400/40');
-            badge.innerText = "TERBUKA";
-            badge.className = "text-xs font-mono text-amber-400 font-bold";
+            if (btn) {
+                btn.className = "w-16 h-16 rounded-full bg-slate-950 border-4 border-amber-400 text-amber-400 font-display font-black text-xl flex items-center justify-center shadow-2xl glow-yellow transform hover:scale-110 transition cursor-pointer opacity-100";
+                btn.innerText = `0${i}`;
+            }
+            if (card) {
+                card.classList.remove('opacity-60', 'border-slate-800');
+                card.classList.add('border-amber-400/40');
+            }
+            if (badge) {
+                badge.innerText = "TERBUKA";
+                badge.className = "text-xs font-mono text-amber-400 font-bold";
+            }
         } else {
-            btn.className = "w-16 h-16 rounded-full bg-slate-950 border-4 border-slate-700 text-slate-500 font-display font-black text-xl flex items-center justify-center shadow-2xl transition opacity-60";
-            btn.innerText = "🔒";
-            card.classList.add('opacity-60', 'border-slate-800');
-            badge.innerText = "TERKUNCI 🔒";
-            badge.className = "text-xs font-mono text-slate-500";
+            if (btn) {
+                btn.className = "w-16 h-16 rounded-full bg-slate-950 border-4 border-slate-700 text-slate-500 font-display font-black text-xl flex items-center justify-center shadow-2xl transition opacity-60";
+                btn.innerText = "🔒";
+            }
+            if (card) card.classList.add('opacity-60', 'border-slate-800');
+            if (badge) {
+                badge.innerText = "TERKUNCI 🔒";
+                badge.className = "text-xs font-mono text-slate-500";
+            }
         }
     }
 }
@@ -394,14 +618,20 @@ function renderCarPosition(dist) {
     if (car) car.setAttribute('transform', `translate(${p.x}, ${p.y}) rotate(${angle})`);
 }
 
-function openRPPModal() { document.getElementById('rpp-modal').classList.remove('hidden'); }
-function closeRPPModal() { document.getElementById('rpp-modal').classList.add('hidden'); }
+function openRPPModal() { 
+    const modal = document.getElementById('rpp-modal');
+    if (modal) modal.classList.remove('hidden'); 
+}
+function closeRPPModal() { 
+    const modal = document.getElementById('rpp-modal');
+    if (modal) modal.classList.add('hidden'); 
+}
 
 function showToast(msg) {
     const t = document.createElement('div');
     t.className = 'fixed bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold text-xs shadow-2xl flex items-center space-x-2';
     t.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>${msg}</span>`;
     document.body.appendChild(t);
-    lucide.createIcons();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     setTimeout(() => t.remove(), 2500);
 }

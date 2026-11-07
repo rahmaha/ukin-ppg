@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PERMESINAN.gg — Slide Presentasi Materi Fullscreen (UKIN PPG)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="react-gg-bg text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-amber-400 selection:text-black overflow-x-hidden">
+
+    <!-- TOP NAVBAR / PRESENTER BAR -->
+    <header class="sticky top-0 z-40 w-full bg-slate-950/95 backdrop-blur-md border-b border-slate-800 px-4 sm:px-8 py-3.5">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            
+            <a href="index.html" class="flex flex-col leading-none tracking-tighter">
+                <span class="font-display font-black text-xl sm:text-2xl text-white tracking-widest uppercase">
+                    PERMESINAN<span class="text-amber-400">.gg</span>
+                </span>
+                <span class="text-[9px] font-mono text-slate-400 uppercase tracking-wider">MEDIA MENGAJAR UKIN PPG • BERPIKIR KOMPUTASIONAL</span>
+            </a>
+
+            <!-- Quick Slide Selector Pills -->
+            <div class="hidden lg:flex items-center space-x-1.5 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 font-mono text-xs" id="materi-slide-tabs">
+                <button onclick="goToMateriDeckSlide(0)" class="materi-tab-btn px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 font-bold transition">1. Konsep</button>
+                <button onclick="goToMateriDeckSlide(1)" class="materi-tab-btn px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition">2. Dekomposisi</button>
+                <button onclick="goToMateriDeckSlide(2)" class="materi-tab-btn px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition">3. Pola</button>
+                <button onclick="goToMateriDeckSlide(3)" class="materi-tab-btn px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition">4. Abstraksi</button>
+                <button onclick="goToMateriDeckSlide(4)" class="materi-tab-btn px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition">5. Algoritma</button>
+                <button onclick="goToMateriDeckSlide(5)" class="materi-tab-btn px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white transition">6. Evaluasi</button>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleBrowserFullscreen()" class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-mono font-extrabold text-xs flex items-center space-x-2 transition shadow-lg glow-yellow">
+                    <i data-lucide="maximize" class="w-4 h-4"></i>
+                    <span id="fullscreen-btn-text">LAYAR PENUH (F11)</span>
+                </button>
+                <a href="index.html" class="px-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800 text-xs font-mono font-bold flex items-center space-x-2 transition">
+                    <i data-lucide="arrow-left" class="w-4 h-4 text-amber-400"></i>
+                    <span class="hidden sm:inline">PETA MISI</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN SLIDE PRESENTATION CANVAS (PPT FULLSCREEN MODE DESIGN) -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-4 sm:py-6 flex flex-col justify-between" id="materi-ppt-container">
+        
+        <!-- TOP SLIDE PRESENTER HEADER -->
+        <div class="flex flex-wrap items-center justify-between bg-slate-900/90 border border-slate-800 rounded-2xl px-6 py-3.5 gap-3 shadow-lg">
+            <div class="flex items-center space-x-3">
+                <span id="materi-slide-badge" class="px-3.5 py-1 rounded-full bg-emerald-400/20 text-emerald-300 font-mono font-bold text-xs border border-emerald-400/30">
+                    SLIDE 1 DARI 6
+                </span>
+                <span id="materi-slide-topic" class="text-slate-300 font-mono text-xs sm:text-sm font-bold uppercase tracking-wider">
+                    BAB 1 • KONSEP UTAMA
+                </span>
+            </div>
+
+            <div class="flex items-center space-x-2 text-xs font-mono text-slate-400">
+                <span>Gunakan Keyboard:</span>
+                <span class="px-2 py-1 bg-slate-950 border border-slate-700 rounded text-slate-200">←</span>
+                <span class="px-2 py-1 bg-slate-950 border border-slate-700 rounded text-slate-200">→</span>
+                <span>atau Tombol Navigasi</span>
+            </div>
+        </div>
+
+        <!-- MAIN SLIDE CARD (LARGE RESPONSIVE POWERPOINT VIEWPORT) -->
+        <div class="gg-card rounded-3xl border-2 border-slate-700/80 p-6 sm:p-12 my-4 flex-grow flex flex-col justify-between shadow-2xl relative min-h-[550px] sm:min-h-[620px] transition-all" id="materi-slide-box">
+            
+            <!-- Slide Content Viewport (Injected via script.js) -->
+            <div id="materi-viewport" class="w-full flex-grow flex flex-col justify-center my-auto">
+                <!-- Dynamic Content Here -->
+            </div>
+
+            <!-- Segmented Slide Progress Line -->
+            <div class="w-full pt-6 border-t border-slate-800/80 flex items-center justify-between gap-4">
+                <div class="flex-grow flex gap-2" id="materi-slide-progress-bar">
+                    <!-- Dynamic Progress Bars Injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM CONTROLLER BAR -->
+        <div class="flex items-center justify-between bg-slate-950/90 border border-slate-800 rounded-2xl px-6 py-4 shadow-xl">
+            <button id="btn-materi-prev" onclick="prevMateriDeckSlide()" class="px-6 py-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 hover:text-white font-mono font-bold text-xs transition flex items-center space-x-2">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                <span>SLIDE SEBELUMNYA</span>
+            </button>
+
+            <!-- Slide Dots Indicator -->
+            <div class="hidden sm:flex items-center space-x-2" id="materi-dots-indicator">
+                <!-- Dots injected via JS -->
+            </div>
+
+            <button id="btn-materi-next" onclick="nextMateriDeckSlide()" class="px-8 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-mono font-extrabold text-xs transition flex items-center space-x-2 glow-yellow shadow-lg">
+                <span>SLIDE SELANJUTNYA</span>
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMateriDeckSlide();
+            
+            // Add keyboard navigation support for PPT mode
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+                    nextMateriDeckSlide();
+                } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                    prevMateriDeckSlide();
+                }
+            });
+        });
+
+        function toggleBrowserFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log("Fullscreen request error:", err);
+                });
+                document.getElementById('fullscreen-btn-text').innerText = "KELUAR LAYAR PENUH";
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+                document.getElementById('fullscreen-btn-text').innerText = "LAYAR PENUH (F11)";
+            }
+        }
+    </script>
+</body>
+</html>
