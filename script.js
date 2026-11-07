@@ -27,164 +27,286 @@ const shaftSVG = n => `
 `;
 
 /* =========================================================================
-   MATERI DIGITAL SLIDE DECK DATA (EXTRACTED FROM CT_Rusli.pptx)
+   MATERI DIGITAL SLIDE DECK DATA
+   Disusun mengikuti urutan bab materi acuan, dengan konteks Teknik Permesinan.
+   Tiap slide punya "chapter" (0-5) supaya tab bab di materi.html bisa melompat.
    ========================================================================= */
+const mdWrap = inner => `<div class="space-y-4 max-w-4xl mx-auto text-left animate-fade-in text-sm sm:text-base">${inner}</div>`;
+const mdBox = (c, head, inner) => `<div class="p-4 bg-slate-950 rounded-2xl border border-${c}-400/40 space-y-2 text-left"><div class="font-bold text-${c}-400 font-mono">${head}</div>${inner}</div>`;
+const mdList = items => `<ul class="list-disc list-inside text-slate-300 space-y-1">${items.map(i => `<li>${i}</li>`).join("")}</ul>`;
+const mdNote = txt => `<div class="p-4 bg-slate-950 rounded-2xl border border-amber-400/30 text-amber-300 text-sm font-mono">${txt}</div>`;
+
 const materiDeckData = [
+    /* ---------- BAB 1: KONSEP ---------- */
     {
+        chapter: 0,
         topic: "BAB 1 • KONSEP BERPIKIR KOMPUTASIONAL",
-        badge: "SLIDE 1 DARI 6",
-        title: "Pengertian Berpikir Komputasional",
-        subtitle: "Computational Thinking (CT) dalam Kehidupan & Teknologi",
-        content: `
-            <div class="space-y-4 max-w-3xl mx-auto text-center animate-fade-in">
-                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    <strong>Berpikir Komputasional (Computational Thinking)</strong> adalah konsep menemukan masalah di sekitar kita, memahaminya, kemudian mengembangkan solusi yang inovatif dengan bantuan perangkat teknologi komputer.
-                </p>
-                <div class="p-4 bg-slate-950 rounded-2xl border border-amber-400/30 text-amber-300 text-xs font-mono">
-                    💡 Berpikir komputasional memungkinkan kita menyelesaikan masalah yang sangat kompleks secara sistematis.
-                </div>
-                <div class="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-                    <div class="p-3 bg-slate-900 rounded-xl border border-emerald-400/40 text-emerald-300">1. Dekomposisi</div>
-                    <div class="p-3 bg-slate-900 rounded-xl border border-cyan-400/40 text-cyan-300">2. Pengenalan Pola</div>
-                    <div class="p-3 bg-slate-900 rounded-xl border border-amber-400/40 text-amber-300">3. Abstraksi</div>
-                    <div class="p-3 bg-slate-900 rounded-xl border border-pink-400/40 text-pink-300">4. Algoritma</div>
-                </div>
+        title: "Apa itu Berpikir Komputasional?",
+        subtitle: "Cara berpikir sistematis untuk memecahkan masalah",
+        content: mdWrap(`
+            <p class="text-slate-300 leading-relaxed">
+                <strong>Berpikir komputasional</strong> (<em>computational thinking</em>) adalah cara menyelesaikan masalah secara runtut: memahami masalahnya, memecahnya menjadi bagian kecil, mencari kesamaan, memilih informasi yang penting, lalu menyusun langkah penyelesaian yang bisa dijalankan oleh manusia maupun komputer.
+            </p>
+            ${mdNote("💡 Di bengkel, cara berpikir ini sudah kamu pakai: membaca gambar kerja, menyusun urutan pengerjaan, dan memeriksa hasil sebelum benda kerja dinyatakan lolos.")}
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center font-mono text-xs">
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-700 text-slate-300">Bukan hanya untuk programmer</div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-700 text-slate-300">Bisa dipakai pada masalah apa pun</div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-700 text-slate-300">Dikerjakan langkah demi langkah</div>
             </div>
-        `
+        `)
     },
     {
+        chapter: 0,
+        topic: "BAB 1 • KONSEP BERPIKIR KOMPUTASIONAL",
+        title: "Empat Pilar dan Alurnya",
+        subtitle: "Saling melengkapi, lalu diuji lewat evaluasi",
+        content: mdWrap(`
+            <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-xs">
+                <div class="p-3 bg-slate-900 rounded-2xl border border-emerald-400/40 space-y-1"><div class="font-bold text-emerald-400 font-mono">1. Dekomposisi</div><p class="text-slate-400">Pecah pesanan menjadi tahapan kecil.</p></div>
+                <div class="p-3 bg-slate-900 rounded-2xl border border-cyan-400/40 space-y-1"><div class="font-bold text-cyan-400 font-mono">2. Pola</div><p class="text-slate-400">Cari kesamaan antar benda kerja.</p></div>
+                <div class="p-3 bg-slate-900 rounded-2xl border border-amber-400/40 space-y-1"><div class="font-bold text-amber-400 font-mono">3. Abstraksi</div><p class="text-slate-400">Ambil ukuran penting, buang detail tak perlu.</p></div>
+                <div class="p-3 bg-slate-900 rounded-2xl border border-pink-400/40 space-y-1"><div class="font-bold text-pink-400 font-mono">4. Algoritma</div><p class="text-slate-400">Susun langkah kerja (SOP) berurutan.</p></div>
+                <div class="p-3 bg-slate-900 rounded-2xl border border-purple-400/40 space-y-1"><div class="font-bold text-purple-400 font-mono">5. Evaluasi</div><p class="text-slate-400">Uji: sudah benar, lengkap, dan efisien?</p></div>
+            </div>
+            <p class="text-slate-400 text-center text-xs font-mono">Contoh yang kita pakai sepanjang pelajaran: membuat poros bertingkat dari baja.</p>
+        `)
+    },
+
+    /* ---------- BAB 2: DEKOMPOSISI ---------- */
+    {
+        chapter: 1,
         topic: "PILAR 1 • DEKOMPOSISI",
-        badge: "SLIDE 2 DARI 6",
-        title: "Dekomposisi (Divide and Conquer)",
-        subtitle: "Memecah Masalah Kompleks Menjadi Bagian-Bagian Kecil",
-        content: `
-            <div class="space-y-4 max-w-3xl mx-auto text-left animate-fade-in text-xs">
-                <p class="text-slate-300">
-                    <strong>Dekomposisi</strong> adalah pendekatan dengan memecah masalah besar dan kompleks menjadi masalah-masalah yang lebih kecil dan lebih sederhana sehingga lebih mudah dikelola, dipahami, dan dicari solusinya (disebut juga <em>"Divide and Conquer"</em>).
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                    <div class="p-4 bg-slate-950 rounded-2xl border border-emerald-400/40 space-y-2">
-                        <div class="font-bold text-emerald-400 font-mono">🚲 Contoh Troubleshoot Sepeda:</div>
-                        <ul class="list-disc list-inside text-slate-400 space-y-1 text-[11px]">
-                            <li>Apa penyebab bunyi "tak tak tak"?</li>
-                            <li>Bagian mana yang bergerak & jadi sumber bunyi?</li>
-                            <li>Bagaimana cara memeriksa & memperbaiki?</li>
-                        </ul>
-                    </div>
-                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-2">
-                        <div class="font-bold text-amber-400 font-mono">🧪 Contoh Sintesis Kimia Industri:</div>
-                        <ul class="list-disc list-inside text-slate-400 space-y-1 text-[11px]">
-                            <li>Persiapan Bahan Baku</li>
-                            <li>Kondisi Reaksi Kimia (suhu & tekanan)</li>
-                            <li>Pemurnian Produk & Pengendalian Kualitas</li>
-                        </ul>
-                    </div>
-                </div>
+        title: "Dekomposisi",
+        subtitle: "Memecah masalah besar menjadi bagian-bagian kecil",
+        content: mdWrap(`
+            <p class="text-slate-300 leading-relaxed">
+                <strong>Dekomposisi</strong> adalah memecah masalah yang besar dan rumit menjadi masalah-masalah kecil yang lebih sederhana, lalu menyelesaikannya satu per satu. Ide ini sering disebut <em>“divide and conquer”</em>.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono text-center">
+                <div class="p-3 bg-slate-900 rounded-xl border border-emerald-400/40 text-emerald-300">Lebih mudah dipahami</div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-emerald-400/40 text-emerald-300">Bisa dibagi ke anggota tim</div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-emerald-400/40 text-emerald-300">Kesalahan lebih cepat ditemukan</div>
             </div>
-        `
+        `)
     },
     {
+        chapter: 1,
+        topic: "PILAR 1 • DEKOMPOSISI",
+        title: "Dekomposisi di Bengkel",
+        subtitle: "Dua contoh dari pekerjaan pembubutan",
+        content: mdWrap(`
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                ${mdBox("emerald", "🔧 Poros hasil bubut ukurannya melenceng", mdList([
+                    "Apa penyebab ukuran melenceng?",
+                    "Bagian mana yang bergeser: pahat, cekam, atau alat ukur?",
+                    "Bagaimana cara memeriksanya?",
+                    "Bagaimana cara memperbaikinya?",
+                    "Bagaimana memastikan perbaikan sudah benar?"
+                ]))}
+                ${mdBox("cyan", "📦 Pesanan 50 poros bertingkat", mdList([
+                    "A. Persiapan bahan dan alat",
+                    "B. Pencekaman dan pembubutan muka",
+                    "C. Pembubutan bertingkat",
+                    "D. Pengukuran dan quality control"
+                ]))}
+            </div>
+            <p class="text-slate-400 text-xs font-mono">Masalah besar → pertanyaan atau tahapan kecil → dikerjakan satu per satu.</p>
+        `)
+    },
+
+    /* ---------- BAB 3: PENGENALAN POLA ---------- */
+    {
+        chapter: 2,
         topic: "PILAR 2 • PENGENALAN POLA",
-        badge: "SLIDE 3 DARI 6",
-        title: "Pengenalan Pola (Pattern Recognition)",
-        subtitle: "Melihat Kesamaan Pola & Karakteristik Permasalahan",
-        content: `
-            <div class="space-y-4 max-w-3xl mx-auto text-left animate-fade-in text-xs">
-                <p class="text-slate-300">
-                    Melihat kesamaan pola atau karakteristik tertentu dari suatu permasalahan. Masalah dengan karakteristik sama memberikan peluang untuk menggunakan solusi yang sama.
-                </p>
-                <div class="p-4 bg-slate-950 rounded-2xl border border-cyan-400/40 space-y-3">
-                    <div class="font-bold text-cyan-400 font-mono">🥼 Kasus Titrasi Kimia Rina (HCl + NaOH):</div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
-                        <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                            <span class="text-rose-400 font-bold block">Percobaan 1:</span>
-                            Tetesan cepat ➔ Merah muda pekat (Gagal/lewat ekuivalen).
-                        </div>
-                        <div class="p-2.5 bg-slate-900 rounded-xl border border-slate-800">
-                            <span class="text-amber-400 font-bold block">Percobaan 2:</span>
-                            Tetes lambat tanpa adukan ➔ Reaksi tidak merata (Gagal).
-                        </div>
-                        <div class="p-2.5 bg-slate-900 rounded-xl border border-emerald-400/40 text-emerald-300 font-semibold">
-                            <span class="text-emerald-400 font-bold block">Percobaan 3 (Berhasil):</span>
-                            Tetes pelan + goyangan konstan ➔ Merah muda pucat stabil 24.8 mL.
-                        </div>
-                    </div>
-                </div>
+        title: "Pengenalan Pola",
+        subtitle: "Mencari kesamaan dan keteraturan pada beberapa masalah",
+        content: mdWrap(`
+            <p class="text-slate-300 leading-relaxed">
+                <strong>Pengenalan pola</strong> adalah melihat kesamaan atau keteraturan dari beberapa masalah. Masalah yang punya karakteristik sama biasanya bisa diselesaikan dengan cara yang sama, sehingga kita tidak perlu mulai dari nol setiap kali.
+            </p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs sm:text-sm border border-slate-700 rounded-xl overflow-hidden">
+                    <thead class="bg-slate-900 text-cyan-300 font-mono">
+                        <tr><th class="p-2 text-left"></th><th class="p-2 text-left">Poros</th><th class="p-2 text-left">Baut</th><th class="p-2 text-left">Bushing</th></tr>
+                    </thead>
+                    <tbody class="text-slate-300">
+                        <tr class="border-t border-slate-800"><td class="p-2 font-bold text-emerald-400">Sama</td><td class="p-2" colspan="3">Bahan dipotong, dicekam, dibubut muka, lalu diukur</td></tr>
+                        <tr class="border-t border-slate-800"><td class="p-2 font-bold text-amber-400">Beda</td><td class="p-2">Dibubut bertingkat</td><td class="p-2">Dibuat ulir</td><td class="p-2">Dibuat lubang di tengah</td></tr>
+                    </tbody>
+                </table>
             </div>
-        `
+            <p class="text-slate-400 text-xs font-mono">Pola apa yang kamu lihat dari ketiga komponen ini?</p>
+        `)
     },
     {
+        chapter: 2,
+        topic: "PILAR 2 • PENGENALAN POLA",
+        title: "Studi Kasus: Tiga Benda Kerja",
+        subtitle: "Mencari pola dari tiga kali percobaan (data contoh)",
+        content: mdWrap(`
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800"><span class="text-rose-400 font-bold block font-mono">Benda kerja A</span>Pemakanan sangat dalam sekaligus ➔ permukaan kasar, ukuran meleset.</div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-slate-800"><span class="text-amber-400 font-bold block font-mono">Benda kerja B</span>Pemakanan tipis tetapi tanpa pendingin ➔ pahat cepat panas, permukaan kurang halus.</div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-emerald-400/40"><span class="text-emerald-400 font-bold block font-mono">Benda kerja C</span>Pemakanan bertahap + pendingin ➔ permukaan halus, ukuran masuk toleransi.</div>
+            </div>
+            ${mdBox("cyan", "🔍 Pola yang bisa disimpulkan", mdList([
+                "Pemakanan bertahap dan terkendali menghasilkan ukuran yang lebih presisi.",
+                "Pola ini bisa dipakai lagi pada poros, baut, maupun bushing."
+            ]))}
+        `)
+    },
+
+    /* ---------- BAB 4: ABSTRAKSI ---------- */
+    {
+        chapter: 3,
         topic: "PILAR 3 • ABSTRAKSI",
-        badge: "SLIDE 4 DARI 6",
-        title: "Abstraksi (Abstraction)",
-        subtitle: "Memilih Informasi Penting & Mengabaikan Detail Tidak Relevan",
-        content: `
-            <div class="space-y-4 max-w-3xl mx-auto text-left animate-fade-in text-xs">
-                <p class="text-slate-300">
-                    <strong>Abstraksi</strong> adalah teknik memfokuskan perhatian pada informasi yang berguna dan relevan serta menyaring atau mengabaikan detail-detail yang tidak penting.
-                </p>
-                <div class="p-4 bg-slate-950 rounded-2xl border border-amber-400/40 space-y-3">
-                    <div class="font-bold text-amber-400 font-mono">🛠️ Kasus Inventaris Bengkel Arif:</div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
-                        <div class="p-3 bg-slate-900 rounded-xl border border-emerald-500/30">
-                            <span class="text-emerald-400 font-bold block mb-1">✔ Disimpan (Inti Relevan):</span>
-                            Oli A (15 pcs, Rp60rb), Busi B (10 pcs, Rp22rb), Ban C (5 pcs, Rp160rb).
-                        </div>
-                        <div class="p-3 bg-slate-900 rounded-xl border border-rose-500/30">
-                            <span class="text-rose-400 font-bold block mb-1">✖ Diabaikan (Detail Tidak Penting):</span>
-                            Warna botol oli, cap tanggal busi, pembungkus plastik ban, poster kusut.
-                        </div>
-                    </div>
-                </div>
+        title: "Abstraksi",
+        subtitle: "Memilih informasi penting, mengabaikan yang tidak relevan",
+        content: mdWrap(`
+            <p class="text-slate-300 leading-relaxed">
+                <strong>Abstraksi</strong> adalah memusatkan perhatian pada informasi yang penting untuk tujuan kita dan mengabaikan detail yang tidak berpengaruh. Informasi yang penting bisa berbeda tergantung tujuannya.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                ${mdBox("amber", "Tujuan: menentukan putaran mesin", `<p class="text-slate-300">Penting: <strong>diameter benda kerja</strong> dan <strong>jenis bahan</strong>.</p><p class="text-slate-500 line-through">Warna cat mesin, merek sepatu operator.</p>`)}
+                ${mdBox("amber", "Tujuan: mencatat hasil QC", `<p class="text-slate-300">Penting: <strong>ukuran hasil ukur</strong> dan <strong>toleransi</strong>.</p><p class="text-slate-500 line-through">Warna kemasan, cuaca hari itu.</p>`)}
             </div>
-        `
+        `)
     },
     {
+        chapter: 3,
+        topic: "PILAR 3 • ABSTRAKSI",
+        title: "Bahan Diskusi: Kartu Benda Kerja",
+        subtitle: "Diskusikan dalam kelompok, lalu cocokkan dengan kunci",
+        content: mdWrap(`
+            <p class="text-slate-300">Data berikut akan dimasukkan ke database QC bengkel. Mana yang <strong class="text-emerald-400">dicatat</strong> dan mana yang <strong class="text-rose-400">diabaikan</strong>?</p>
+            <div class="flex flex-wrap gap-2 text-sm font-mono">
+                <span class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-full">Nomor job</span>
+                <span class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-full">Jenis bahan</span>
+                <span class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-full">Diameter hasil ukur</span>
+                <span class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-full">Toleransi ukuran</span>
+                <span class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-full">Warna cat mesin bubut</span>
+                <span class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-full">Merek sepatu operator</span>
+                <span class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-full">Cuaca hari itu</span>
+                <span class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-full">Warna kotak kemasan</span>
+            </div>
+            <button onclick="document.getElementById('kunci-abs').classList.toggle('hidden')" class="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-mono font-extrabold text-xs transition">TAMPILKAN / SEMBUNYIKAN KUNCI</button>
+            <div id="kunci-abs" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                <div class="p-3 bg-slate-900 rounded-xl border border-emerald-500/40"><span class="text-emerald-400 font-bold block mb-1">✔ Dicatat</span>Nomor job, jenis bahan, diameter hasil ukur, toleransi ukuran.</div>
+                <div class="p-3 bg-slate-900 rounded-xl border border-rose-500/40"><span class="text-rose-400 font-bold block mb-1">✖ Diabaikan</span>Warna cat mesin, merek sepatu operator, cuaca, warna kotak kemasan.</div>
+            </div>
+        `)
+    },
+
+    /* ---------- BAB 5: ALGORITMA ---------- */
+    {
+        chapter: 4,
         topic: "PILAR 4 • ALGORITMA",
-        badge: "SLIDE 5 DARI 6",
-        title: "Algoritma (Flowchart & Pseudocode)",
-        subtitle: "Mengembangkan Langkah Instruksi Logis & Terstruktur",
-        content: `
-            <div class="space-y-4 max-w-3xl mx-auto text-left animate-fade-in text-xs">
-                <p class="text-slate-300">
-                    <strong>Algoritma</strong> adalah langkah-langkah atau aturan baku yang harus dipenuhi untuk memecah masalah secara terstruktur. Algoritma disajikan melalui 2 cara utama:
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="p-4 bg-slate-950 rounded-2xl border border-purple-400/40 space-y-2">
-                        <div class="font-bold text-purple-400 font-mono">📊 Flowchart (Diagram Alir):</div>
-                        <p class="text-slate-400 text-[11px]">Diagram mewakili simbol standar: Oval (Start/Stop), Persegi Panjang (Proses), Belah Ketupat (Keputusan), Jajaran Genjang (Input/Output).</p>
-                    </div>
-                    <div class="p-4 bg-slate-950 rounded-2xl border border-pink-400/40 space-y-2">
-                        <div class="font-bold text-pink-400 font-mono">📝 Pseudocode:</div>
-                        <p class="text-slate-400 text-[11px]">Rangkaian instruksi berbentuk kode baku. Perintah ditulis huruf KAPITAL (INPUT, OUTPUT, STORE, IF-THEN), dan variabel huruf kecil.</p>
-                    </div>
-                </div>
+        title: "Algoritma",
+        subtitle: "Langkah-langkah berurutan untuk menyelesaikan masalah",
+        content: mdWrap(`
+            <p class="text-slate-300 leading-relaxed">
+                <strong>Algoritma</strong> adalah urutan langkah atau aturan yang harus dijalankan untuk menyelesaikan masalah. Di bengkel, algoritma itu mirip SOP: langkahnya jelas, berurutan, dan bisa diikuti siapa saja.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                ${mdBox("purple", "📊 Flowchart", `<p class="text-slate-400">Algoritma digambar dengan simbol standar dan panah.</p>`)}
+                ${mdBox("pink", "📝 Pseudocode", `<p class="text-slate-400">Algoritma ditulis seperti kode, tetapi tidak terikat bahasa pemrograman tertentu.</p>`)}
             </div>
-        `
+        `)
     },
     {
-        topic: "TAHAP AKHIR • EVALUASI SOLUSI",
-        badge: "SLIDE 6 DARI 6",
-        title: "Mengevaluasi Solusi & Dry Run",
-        subtitle: "Memastikan Solusi Bekerja Efisien, Lengkap, dan Tepat",
-        content: `
-            <div class="space-y-4 max-w-3xl mx-auto text-left animate-fade-in text-xs">
-                <p class="text-slate-300">
-                    Evaluasi dilakukan untuk memastikan solusi dapat bekerja dengan baik serta melihat kemungkinan peningkatan efisiensi.
-                </p>
-                <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
-                    <div class="font-bold text-emerald-400 font-mono">🔍 Kriteria Uji Solusi (Teknik Dry Run):</div>
-                    <p class="text-slate-400 text-[11px]">
-                        <em>Dry run</em> dilakukan dengan menelusuri langkah demi langkah menggunakan 3 kriteria input berbeda:
-                    </p>
-                    <div class="grid grid-cols-3 gap-2 text-center font-mono text-[10px]">
-                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-700 text-slate-300">1. Input Normal</div>
-                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-700 text-amber-300">2. Input Batas</div>
-                        <div class="p-2 bg-slate-900 rounded-lg border border-slate-700 text-rose-300">3. Input Ekstrem</div>
-                    </div>
+        chapter: 4,
+        topic: "PILAR 4 • ALGORITMA",
+        title: "Flowchart",
+        subtitle: "Simbol dan contoh alur pemeriksaan ukuran",
+        content: mdWrap(`
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs sm:text-sm">
+                <div class="p-2 bg-slate-900 rounded-lg border border-slate-700"><span class="text-purple-300 font-mono text-lg">⬭</span> Mulai / Selesai</div>
+                <div class="p-2 bg-slate-900 rounded-lg border border-slate-700"><span class="text-purple-300 font-mono text-lg">▭</span> Proses</div>
+                <div class="p-2 bg-slate-900 rounded-lg border border-slate-700"><span class="text-purple-300 font-mono text-lg">◇</span> Keputusan</div>
+                <div class="p-2 bg-slate-900 rounded-lg border border-slate-700"><span class="text-purple-300 font-mono text-lg">▱</span> Input / Output</div>
+                <div class="p-2 bg-slate-900 rounded-lg border border-slate-700"><span class="text-purple-300 font-mono text-lg">○</span> Penghubung</div>
+                <div class="p-2 bg-slate-900 rounded-lg border border-slate-700"><span class="text-purple-300 font-mono text-lg">➔</span> Arah aliran</div>
+            </div>
+            <div class="p-4 bg-slate-950 rounded-2xl border border-purple-400/40 flex flex-wrap items-center gap-2 text-xs font-mono">
+                <span class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-600">Mulai</span> ➔
+                <span class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-600">Ukur diameter</span> ➔
+                <span class="px-3 py-1.5 rounded-lg bg-slate-900 border border-amber-400/60 text-amber-300">◇ Dalam toleransi?</span> ➔
+                <span class="px-3 py-1.5 rounded-lg bg-slate-900 border border-emerald-400/60 text-emerald-300">Ya: Lolos QC</span>
+                <span class="px-3 py-1.5 rounded-lg bg-slate-900 border border-rose-400/60 text-rose-300">Tidak: Bubut ulang / Reject</span>
+            </div>
+        `)
+    },
+    {
+        chapter: 4,
+        topic: "PILAR 4 • ALGORITMA",
+        title: "Pseudocode",
+        subtitle: "Contoh algoritma pemeriksaan toleransi diameter poros",
+        content: mdWrap(`
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <pre class="p-4 bg-slate-950 rounded-2xl border border-pink-400/40 text-pink-200 text-xs sm:text-sm font-mono leading-relaxed overflow-x-auto">MULAI
+  INPUT diameter
+  WHILE diameter &gt; 25.05 DO
+    OUTPUT "Bubut tipis lagi"
+    INPUT diameter
+  ENDWHILE
+  IF diameter &gt;= 24.95 THEN
+    OUTPUT "Lolos QC"
+  ELSE
+    OUTPUT "Reject"
+  ENDIF
+SELESAI</pre>
+                <div class="space-y-2 text-slate-300">
+                    <p class="font-bold text-pink-400 font-mono">Aturan penulisan</p>
+                    ${mdList([
+                        "Perintah ditulis dengan huruf KAPITAL.",
+                        "Nama variabel ditulis dengan huruf kecil.",
+                        "Pesan ditulis di dalam tanda kutip.",
+                        "Satu perintah untuk satu baris."
+                    ])}
+                    <p class="text-slate-400 text-xs font-mono pt-2">Target Ø25 mm dengan toleransi ±0,05 mm.</p>
                 </div>
             </div>
-        `
+        `)
+    },
+
+    /* ---------- BAB 6: EVALUASI ---------- */
+    {
+        chapter: 5,
+        topic: "TAHAP AKHIR • EVALUASI SOLUSI",
+        title: "Mengevaluasi Solusi",
+        subtitle: "Memastikan solusi bekerja dengan baik dan bisa ditingkatkan",
+        content: mdWrap(`
+            <p class="text-slate-300">Setelah algoritma selesai disusun, periksa dengan empat pertanyaan berikut:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                <div class="p-4 bg-slate-900 rounded-2xl border border-emerald-400/40"><div class="font-bold text-emerald-400 font-mono">Mudah dimengerti?</div><p class="text-slate-400">Orang lain bisa membaca tanpa salah paham.</p></div>
+                <div class="p-4 bg-slate-900 rounded-2xl border border-cyan-400/40"><div class="font-bold text-cyan-400 font-mono">Lengkap?</div><p class="text-slate-400">Semua bagian masalah sudah tertangani.</p></div>
+                <div class="p-4 bg-slate-900 rounded-2xl border border-amber-400/40"><div class="font-bold text-amber-400 font-mono">Efisien?</div><p class="text-slate-400">Waktu, bahan, dan tenaga dipakai seminimal mungkin.</p></div>
+                <div class="p-4 bg-slate-900 rounded-2xl border border-pink-400/40"><div class="font-bold text-pink-400 font-mono">Sesuai kriteria?</div><p class="text-slate-400">Cocok dengan job sheet dan toleransi yang ditetapkan.</p></div>
+            </div>
+        `)
+    },
+    {
+        chapter: 5,
+        topic: "TAHAP AKHIR • EVALUASI SOLUSI",
+        title: "Dry Run",
+        subtitle: "Menelusuri algoritma langkah demi langkah dengan input berbeda",
+        content: mdWrap(`
+            <p class="text-slate-300 text-sm">Uji pseudocode tadi dengan input normal, input batas, dan input ekstrem.</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs sm:text-sm border border-slate-700 rounded-xl overflow-hidden">
+                    <thead class="bg-slate-900 text-emerald-300 font-mono">
+                        <tr><th class="p-2 text-left">Jenis input</th><th class="p-2 text-left">Diameter</th><th class="p-2 text-left">Jalur algoritma</th><th class="p-2 text-left">Hasil</th></tr>
+                    </thead>
+                    <tbody class="text-slate-300">
+                        <tr class="border-t border-slate-800"><td class="p-2 font-mono">Normal</td><td class="p-2">25,00</td><td class="p-2">WHILE tidak jalan, IF benar</td><td class="p-2 text-emerald-400">Lolos QC</td></tr>
+                        <tr class="border-t border-slate-800"><td class="p-2 font-mono text-amber-300">Batas atas</td><td class="p-2">25,05</td><td class="p-2">25,05 &gt; 25,05 salah, IF benar</td><td class="p-2 text-emerald-400">Lolos QC</td></tr>
+                        <tr class="border-t border-slate-800"><td class="p-2 font-mono text-amber-300">Batas bawah</td><td class="p-2">24,95</td><td class="p-2">WHILE tidak jalan, IF benar</td><td class="p-2 text-emerald-400">Lolos QC</td></tr>
+                        <tr class="border-t border-slate-800"><td class="p-2 font-mono text-rose-300">Ekstrem</td><td class="p-2">30,00</td><td class="p-2">WHILE jalan, minta bubut lagi</td><td class="p-2 text-amber-300">Bubut tipis lagi</td></tr>
+                        <tr class="border-t border-slate-800"><td class="p-2 font-mono text-rose-300">Ekstrem</td><td class="p-2">24,90</td><td class="p-2">WHILE tidak jalan, IF salah</td><td class="p-2 text-rose-400">Reject</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        `)
     }
 ];
 
@@ -341,7 +463,7 @@ function renderMateriDeckSlide() {
 
     if (!viewport) return;
 
-    if (badgeEl) badgeEl.innerText = slide.badge;
+    if (badgeEl) badgeEl.innerText = `SLIDE ${currentMateriSlideIndex + 1} DARI ${materiDeckData.length}`;
     if (topicEl) topicEl.innerText = slide.topic;
 
     viewport.innerHTML = `
@@ -374,7 +496,7 @@ function renderMateriDeckSlide() {
 
     const tabs = document.querySelectorAll('.materi-tab-btn');
     tabs.forEach((tab, idx) => {
-        if (idx === currentMateriSlideIndex) {
+        if (idx === slide.chapter) {
             tab.className = "materi-tab-btn px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 font-bold transition";
         } else {
             tab.className = "materi-tab-btn px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition";
@@ -396,6 +518,11 @@ function prevMateriDeckSlide() {
         currentMateriSlideIndex--;
         renderMateriDeckSlide();
     }
+}
+
+function goToMateriChapter(ch) {
+    const i = materiDeckData.findIndex(sl => sl.chapter === ch);
+    if (i >= 0) goToMateriDeckSlide(i);
 }
 
 function goToMateriDeckSlide(index) {
