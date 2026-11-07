@@ -1,235 +1,407 @@
-/* PERMESINAN.gg: logika halaman */
+let currentStage = 1;
+let currentSubSlideIndex = 0;
+let unlockedStages = new Set([1]); // Stage 1 Terbuka Awal
+let currentCarDistance = 0;
+let animReqId = null;
+let timerInterval = null;
+let timerSecondsLeft = 600;
 
-/* ===== Pengaturan ===== */
-const CFG = {
-  pre: "",   // tempel tautan sematan Google Form pre-test
-  post: "",  // tempel tautan sematan Google Form post-test
-  codes: ["", "BUBUT", "POROS", "CEKAM", "UKUR", "SELESAI"] // kode cadangan dari guru
-};
-const LV = [
-  { t: "Misi",      d: "Kenali pesanan bengkel dan tujuan belajarmu.",        m: 10, c: "#10b981", s: "Orientasi peserta didik pada masalah" },
-  { t: "Pre-test",  d: "Cek pemahaman awalmu, tanpa tekanan.",                m: 10, c: "#06b6d4", s: "Asesmen diagnostik awal" },
-  { t: "Materi",    d: "Empat pilar berpikir komputasional lewat kasus poros.", m: 15, c: "#facc15", s: "Mengorganisasi peserta didik belajar" },
-  { t: "LKM",       d: "Tiga tantangan bersama kelompokmu.",                  m: 30, c: "#ff498b", s: "Penyelidikan dan pengembangan hasil" },
-  { t: "Post-test", d: "Buktikan apa yang sudah kamu kuasai.",                m: 15, c: "#a855f7", s: "Analisis dan evaluasi (formatif akhir)" },
-  { t: "Refleksi",  d: "Ceritakan apa yang kamu pelajari.",                   m: 10, c: "#f97316", s: "Refleksi proses belajar" }
+const nodeCoordinates = [
+    { x: 450, y: 40 },
+    { x: 240, y: 240 },
+    { x: 680, y: 560 },
+    { x: 220, y: 920 },
+    { x: 680, y: 1280 },
+    { x: 450, y: 1640 }
 ];
-// koordinat tiap level pada jalur (sistem koordinat SVG 900 x 2160)
-const NODE = [[220, 240], [680, 570], [220, 900], [680, 1230], [220, 1560], [680, 1890]];
-const VBW = 900, VBH = 2160;
 
-const $ = s => document.querySelector(s);
-const dlg = $("#dlg");
-const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const un = new Set([0]);
-try { JSON.parse(localStorage.getItem("pgU") || "[]").forEach(i => un.add(i)); } catch (e) {}
-const sv = () => { try { localStorage.setItem("pgU", JSON.stringify([...un])); } catch (e) {} };
-const shuffle = a => {
-  const b = [...a];
-  do { for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } }
-  while (b.every((x, i) => x === a[i]));
-  return b;
-};
+let nodeDistances = [0, 280, 850, 1420, 1980, 2450];
 
-/* ===== Peta dan mobil ===== */
-let carAt = -1, carD = 0, raf = 0, busy = false, dist = [0];
-
-function initDist() {
-  const p = $("#road"), T = p.getTotalLength();
-  dist = [0];
-  NODE.forEach(([x, y]) => {
-    let best = 0, min = Infinity;
-    for (let l = 0; l <= T; l += 2) {
-      const q = p.getPointAtLength(l), d = Math.hypot(q.x - x, q.y - y);
-      if (d < min) { min = d; best = l; }
-    }
-    dist.push(best);
-  });
-}
-function setCar(l) {
-  const p = $("#road"), T = p.getTotalLength();
-  const a = p.getPointAtLength(l), b = p.getPointAtLength(Math.min(l + 3, T));
-  const ang = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI + 90;
-  const k = Math.min(2.2, Math.max(1, 0.9 * VBW / $("#roadmap").clientWidth));
-  $("#car").setAttribute("transform", `translate(${a.x},${a.y}) rotate(${ang}) scale(${k})`);
-}
-function drive(to, ms, cb) {
-  cancelAnimationFrame(raf);
-  const f = carD, t0 = performance.now();
-  const step = now => {
-    const k = Math.min((now - t0) / ms, 1);
-    const e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-    carD = f + (to - f) * e;
-    setCar(carD);
-    if (k < 1) raf = requestAnimationFrame(step); else if (cb) cb();
-  };
-  raf = requestAnimationFrame(step);
-}
-function label() {
-  $("#carlab").textContent = carAt < 0 ? "Start" : `Level ${carAt + 1} (${LV[carAt].t})`;
-}
-const pct = (x, y) => `left:${x / VBW * 100}%;top:${y / VBH * 100}%`;
-
-function drawMap() {
-  $("#nodes").innerHTML =
-    `<span class="flag" style="${pct(450, 0)}">START</span><span class="flag" style="${pct(450, 2150)}">FINISH</span>` +
-    LV.map((l, i) => {
-      const o = un.has(i), [x, y] = NODE[i];
-      return `<button class="nd${o ? " on" : ""}${i === carAt ? " cur" : ""}" style="--c:${l.c};${pct(x, y)}" data-i="${i}" aria-label="Level ${i + 1}: ${l.t}${o ? "" : ", terkunci"}">0${i + 1}<em class="nl">${l.t}</em></button>` +
-        `<div class="card ${x < 450 ? "cr" : "cl"}" style="--c:${l.c};top:${y / VBH * 100}%"><span class="chip">LEVEL ${i + 1}, ${l.m} MENIT</span><h3>${l.t}</h3><p>${l.d}</p><button class="btn go" data-i="${i}">${o ? "LUNCURKAN MOBIL →" : "TERKUNCI"}</button></div>`;
-    }).join("");
-  document.querySelectorAll(".nd,.go").forEach(b => b.onclick = () => go(+b.dataset.i));
-}
-function go(i) {
-  if (busy) return;
-  if (!un.has(i)) { lock(i); return; }
-  busy = true;
-  carAt = i; label(); drawMap();
-  const n = document.querySelector(`.nd[data-i="${i}"]`);
-  if (n) n.scrollIntoView({ behavior: RM ? "auto" : "smooth", block: "center" });
-  drive(dist[i + 1], RM ? 1 : 1400, () => { busy = false; openLv(i); });
-}
-
-/* ===== Bahan slide ===== */
+// SHAFT SVG HIASAN KETEKNIKAN
 const ST = [22, 34, 50, 50, 34, 22];
-const shaft = n => `<svg class="sh" viewBox="0 0 360 70" aria-hidden="true">${ST.map((h, i) => `<rect class="${i < n ? "on" : ""}" x="${i * 60}" y="${(70 - h) / 2}" width="58" height="${h}" rx="2"/>`).join("")}</svg>`;
-const form = (u, n) => u ? `<iframe src="${u}" title="${n}" loading="lazy"></iframe>` : `<div class="ph"><strong>Tempat ${n}</strong><p>Tempelkan tautan sematan Google Form di bagian CFG pada script.js.</p></div>`;
-const chips = (a, c) => a.map(x => `<i class="c2 ${c}">${x}</i>`).join("");
-const PIL = [
-  ["Dekomposisi", "#10b981", "Memecah masalah besar menjadi bagian kecil yang lebih mudah dikerjakan.", "Membuat satu poros dipecah menjadi tahap yang masing-masing jelas.",
-    `<div class="vz"><b class="blk">Buat poros</b>→${chips(["Potong", "Cekam", "Bubut", "Ukur", "Finishing"], "hi")}</div>`],
-  ["Pengenalan pola", "#06b6d4", "Mencari kesamaan atau pengulangan antara beberapa masalah.", "Poros dan baut punya tahap yang sama, hanya beberapa tahap yang berbeda.",
-    `<div class="vz"><span class="lb">Poros</span>${chips(["Potong", "Cekam", "Bubut muka"], "hi")}${chips(["Bubut bertingkat"], "")}${chips(["Ukur"], "hi")}</div><div class="vz"><span class="lb">Baut</span>${chips(["Potong", "Cekam", "Bubut muka"], "hi")}${chips(["Buat ulir"], "")}${chips(["Ukur"], "hi")}</div>`],
-  ["Abstraksi", "#facc15", "Mengambil informasi yang penting dan mengabaikan detail yang tidak memengaruhi hasil.", "Saat membubut, yang menentukan hasil hanyalah ukuran dan toleransi.",
-    `<div class="vz"><span class="lb">Dipakai</span>${chips(["Diameter", "Panjang", "Toleransi"], "hi")}</div><div class="vz"><span class="lb">Diabaikan</span>${chips(["Warna cat mesin", "Merek sepatu operator"], "no")}</div>`],
-  ["Algoritma", "#ff498b", "Menyusun langkah penyelesaian yang berurutan dan jelas.", "Bubut muka dikerjakan sebelum mengukur panjang, dan mengukur setelah pembubutan selesai.",
-    `<ol class="al"><li>Bubut muka</li><li>Bubut rata</li><li>Bubut bertingkat</li><li>Ukur dengan jangka sorong</li></ol>`]
-];
-const ORDER = ["Potong bahan", "Pasang benda kerja di chuck", "Bubut muka", "Bubut rata", "Bubut bertingkat", "Chamfer ujung", "Ukur dengan jangka sorong", "Lepas dan bersihkan"];
-const POLA = [["Potong bahan", 1], ["Pasang benda kerja di chuck", 1], ["Bubut muka", 1], ["Bubut rata", 1], ["Chamfer ujung", 1], ["Ukur dengan jangka sorong", 1], ["Lepas dan bersihkan", 1], ["Bubut bertingkat", 0], ["Buat ulir", 0]];
-const ABS = [["Diameter tiap tingkat", 1], ["Panjang tiap tingkat", 1], ["Toleransi ukuran", 1], ["Jenis bahan", 1], ["Warna cat mesin bubut", 0], ["Merek sepatu operator", 0], ["Cuaca hari ini", 0], ["Nama pabrik jangka sorong", 0]];
+const shaftSVG = n => `
+    <svg class="w-full max-w-md mx-auto my-4" viewBox="0 0 360 70">
+        ${ST.map((h, i) => `<rect fill="${i < n ? '#10b981' : 'rgba(255,255,255,0.1)'}" x="${i * 60}" y="${(70 - h) / 2}" width="58" height="${h}" rx="3"/>`).join("")}
+    </svg>
+`;
 
-const pickH = (id, t, ins, it) => `<div class="ch" id="${id}"><p class="kick">TANTANGAN</p><h2>${t}</h2><p>${ins}</p><div class="chips">${it.map((x, i) => `<button class="pk" data-i="${i}" aria-pressed="false">${x[0]}</button>`).join("")}</div><button class="btn" data-a="c">Periksa</button> <button class="btn g" data-a="r">Ulangi</button><p class="fb" role="status"></p></div>`;
-function pickI(id, it) {
-  const b = $("#" + id), cs = [...b.querySelectorAll(".pk")], fb = b.querySelector(".fb");
-  cs.forEach(c => c.onclick = () => { c.classList.remove("right", "wrong"); c.setAttribute("aria-pressed", c.getAttribute("aria-pressed") === "true" ? "false" : "true"); });
-  b.querySelector('[data-a="c"]').onclick = () => {
-    let g = 0;
-    cs.forEach((c, i) => { const ok = (c.getAttribute("aria-pressed") === "true") === !!it[i][1]; c.classList.add(ok ? "right" : "wrong"); if (ok) g++; });
-    fb.className = "fb " + (g === it.length ? "ok" : "no");
-    fb.textContent = g === it.length ? "Semua tepat." : `Baru ${g} dari ${it.length} pilihan yang tepat. Perhatikan yang bertanda merah.`;
-  };
-  b.querySelector('[data-a="r"]').onclick = () => { cs.forEach(c => { c.classList.remove("right", "wrong"); c.setAttribute("aria-pressed", "false"); }); fb.textContent = ""; };
-}
-function ordI() {
-  const b = $("#ord"), fb = b.querySelector(".fb");
-  let pool = shuffle(ORDER), seq = [];
-  const dr = () => {
-    b.querySelector(".pool").innerHTML = pool.map(s => `<button class="pk" data-s="${s}">${s}</button>`).join("") || '<span class="empty">Semua tahap sudah dipakai.</span>';
-    b.querySelector(".seq").innerHTML = seq.map(s => `<li><button class="pk" data-r="${s}">${s}</button></li>`).join("") || '<li class="empty">Ketuk tahap di atas untuk menyusunnya di sini.</li>';
-    b.querySelectorAll("[data-s]").forEach(x => x.onclick = () => { pool = pool.filter(y => y !== x.dataset.s); seq.push(x.dataset.s); fb.textContent = ""; dr(); });
-    b.querySelectorAll("[data-r]").forEach(x => x.onclick = () => { seq = seq.filter(y => y !== x.dataset.r); pool.push(x.dataset.r); fb.textContent = ""; dr(); });
-  };
-  b.querySelector('[data-a="c"]').onclick = () => {
-    const g = seq.filter((s, i) => s === ORDER[i]).length, ok = g === ORDER.length && seq.length === ORDER.length;
-    fb.className = "fb " + (ok ? "ok" : "no");
-    fb.textContent = ok ? "Urutan tepat. Algoritmamu sudah runtut." : `${g} dari ${ORDER.length} posisi sudah tepat.`;
-  };
-  b.querySelector('[data-a="r"]').onclick = () => { pool = shuffle(ORDER); seq = []; fb.textContent = ""; dr(); };
-  dr();
-}
-const GO = ["#10b981", "#06b6d4", "#facc15", "#ff498b"];
-const SL = [
-  () => [
-    `<p class="kick">LEVEL 1, MISI</p><h2 class="big">Pecahkan Poros Bertingkat</h2><p class="lead">Berpikir komputasional untuk Informatika kelas X Teknik Permesinan.</p>${shaft(6)}`,
-    `<p class="kick">PESANAN MASUK</p><h2>Satu poros bertingkat dari baja</h2><div class="case"><p>Sebelum mesin bubut dinyalakan, tim kamu harus merancang cara mengerjakannya: runtut, tidak ada langkah terlewat, dan sesuai toleransi.</p></div>${shaft(3)}`,
-    `<p class="kick">TUJUAN PEMBELAJARAN</p><h2>Di akhir misi, kamu mampu</h2><div class="gl">${["Menguraikan proses pembuatan poros menjadi tahapan kecil", "Mengenali pola pada tahapan komponen sejenis", "Memilih informasi penting dan mengabaikan yang tidak relevan", "Menyusun urutan langkah yang runtut"].map((x, i) => `<div class="gc" style="--g:${GO[i]}"><b>${PIL[i][0]}</b><span>${x}</span></div>`).join("")}</div>`
-  ],
-  () => [`<p class="kick">LEVEL 2</p><h2>Pre-test</h2><p class="lead">Kerjakan sendiri. Ini untuk melihat titik awalmu.</p>${form(CFG.pre, "pre-test")}`],
-  () => [`<p class="kick">LEVEL 3, MATERI</p><h2>Empat pilar berpikir komputasional</h2><div class="gl">${PIL.map(p => `<div class="gc" style="--g:${p[1]}"><b>${p[0]}</b><span>${p[2]}</span></div>`).join("")}</div>`]
-    .concat(PIL.map(p => `<p class="kick" style="--c:${p[1]}">PILAR</p><h2>${p[0]}</h2><p>${p[2]}</p><div class="case" style="--c:${p[1]}"><strong>Pada poros bertingkat:</strong> ${p[3]}</div><div style="--c:${p[1]}">${p[4]}</div>`)),
-  () => [
-    `<div class="ch" id="ord"><p class="kick">TANTANGAN 1</p><h2>Dekomposisi dan algoritma</h2><p>Susun tahap pembuatan poros bertingkat dengan urutan yang benar.</p><div class="chips pool"></div><ol class="seq"></ol><button class="btn" data-a="c">Periksa</button> <button class="btn g" data-a="r">Acak ulang</button><p class="fb" role="status"></p></div>`,
-    pickH("pola", "Pengenalan pola", "Pilih tahap yang muncul pada pembuatan poros bertingkat dan pembuatan baut.", POLA),
-    pickH("abs", "Abstraksi", "Pilih hanya informasi yang penting untuk membubut poros.", ABS)
-  ],
-  () => [`<p class="kick">LEVEL 5</p><h2>Post-test</h2><p class="lead">Kerjakan sendiri dengan jujur.</p>${form(CFG.post, "post-test")}`],
-  () => [
-    `<p class="kick">LEVEL 6, REFLEKSI</p><h2>Diskusikan singkat</h2><ol><li>Tahap mana yang paling sulit dipecah, dan mengapa?</li><li>Di mana lagi kamu bisa memakai dekomposisi dan algoritma di bengkel?</li><li>Apa yang akan kamu lakukan berbeda pada tantangan berikutnya?</li></ol>`,
-    `<p class="kick">MISI SELESAI</p><h2 class="big">Poros sudah utuh</h2><p class="lead">Terima kasih sudah bekerja sama sampai garis finis.</p>${shaft(6)}`
-  ]
-];
-const INIT = [0, 0, 0, [ordI, () => pickI("pola", POLA), () => pickI("abs", ABS)], 0, 0];
-
-/* ===== Layar level ===== */
-let cur = 0, si = 0, tmr = null, left = 0;
-const fmt = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
-function openLv(i) {
-  cur = i; si = 0; clearInterval(tmr);
-  $("#stage").hidden = false; document.body.style.overflow = "hidden";
-  $("#stage").style.setProperty("--c", LV[i].c);
-  $("#tm").textContent = fmt(LV[i].m * 60); $("#tm").classList.remove("w"); $("#ts").textContent = "Mulai timer";
-  draw();
-}
-function draw() {
-  const S = SL[cur]();
-  $("#st").textContent = `Level ${cur + 1}: ${LV[cur].t}`;
-  $("#stb").innerHTML = `<div class="slide" style="--c:${LV[cur].c}">${S[si]}</div>`;
-  $("#dots").innerHTML = S.map((_, k) => `<i class="${k <= si ? "on" : ""}"></i>`).join("");
-  $("#prev").disabled = si === 0;
-  $("#next").textContent = si === S.length - 1 ? (cur < LV.length - 1 ? `Lanjut ke level ${cur + 2} →` : "Kembali ke peta") : "Lanjut →";
-  if (INIT[cur] && INIT[cur][si]) INIT[cur][si]();
-  $("#stb").scrollTop = 0;
-}
-function closeLv() { clearInterval(tmr); $("#stage").hidden = true; document.body.style.overflow = ""; }
-$("#x").onclick = closeLv;
-$("#prev").onclick = () => { if (si > 0) { si--; draw(); } };
-$("#next").onclick = () => {
-  if (si < SL[cur]().length - 1) { si++; draw(); }
-  else if (cur < LV.length - 1) { const n = cur + 1; un.add(n); sv(); closeLv(); go(n); }
-  else closeLv();
+// PRESENTATION SLIDES DATA STRUCTURE (PERFECT MATCH SCREENSHOT & CONTENT)
+const stageSlides = {
+    1: {
+        title: "Level 1: Misi",
+        minutes: 10,
+        hasTimer: false,
+        slides: [
+            {
+                subtitle: "STAGE 1 • MISI PEMBELAJARAN",
+                heading: "Pecahkan Poros Bertingkat",
+                lead: "Terapkan Berpikir Komputasional untuk menyelesaikan pesanan permesinan presisi.",
+                body: shaftSVG(6)
+            },
+            {
+                subtitle: "PESANAN BENGKEL MASUK",
+                heading: "50 Unit Poros Bertingkat Baja",
+                lead: "Sebelum mesin bubut dinyalakan, tim harus merancang alur kerja yang runtut tanpa ada langkah terlewat.",
+                body: `
+                    <div class="p-5 bg-slate-900 border-l-4 border-emerald-400 rounded-2xl max-w-2xl mx-auto text-left text-xs text-slate-300 space-y-2">
+                        <p><strong>Studi Kasus:</strong> Tanpa perencanaan runtut, risiko pahat patah dan toleransi ukuran terlewati sangat tinggi.</p>
+                    </div>
+                    ${shaftSVG(3)}
+                `
+            },
+            {
+                subtitle: "TUJUAN PEMBELAJARAN",
+                heading: "Di akhir misi, kamu mampu",
+                body: `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-5xl mt-6">
+                        <div class="gg-card p-5 rounded-3xl border-t-4 border-emerald-400 text-left space-y-2">
+                            <h4 class="font-display font-bold text-white text-base">Dekomposisi</h4>
+                            <p class="text-xs text-slate-400">Menguraikan proses pembuatan poros menjadi tahapan kecil.</p>
+                        </div>
+                        <div class="gg-card p-5 rounded-3xl border-t-4 border-cyan-400 text-left space-y-2">
+                            <h4 class="font-display font-bold text-white text-base">Pengenalan pola</h4>
+                            <p class="text-xs text-slate-400">Mengenali pola pada tahapan komponen sejenis.</p>
+                        </div>
+                        <div class="gg-card p-5 rounded-3xl border-t-4 border-amber-400 text-left space-y-2">
+                            <h4 class="font-display font-bold text-white text-base">Abstraksi</h4>
+                            <p class="text-xs text-slate-400">Memilih informasi penting dan mengabaikan yang tidak relevan.</p>
+                        </div>
+                        <div class="gg-card p-5 rounded-3xl border-t-4 border-pink-400 text-left space-y-2">
+                            <h4 class="font-display font-bold text-white text-base">Algoritma</h4>
+                            <p class="text-xs text-slate-400">Menyusun urutan langkah yang runtut.</p>
+                        </div>
+                    </div>
+                `
+            }
+        ]
+    },
+    2: {
+        title: "Level 2: Pre-test",
+        minutes: 10,
+        hasTimer: true,
+        slides: [
+            {
+                subtitle: "LEVEL 2 • ASESMEN DIAGNOSTIK",
+                heading: "Pre-test Diagnostik BK",
+                lead: "Kerjakan sendiri. Ini untuk mengukur titik awal pemahamanmu.",
+                body: `
+                    <div class="gg-card p-6 rounded-3xl max-w-xl mx-auto text-left space-y-4">
+                        <p class="text-xs text-white font-semibold">1. Menguraikan masalah pekerjaan permesinan yang kompleks menjadi bagian kecil disebut...</p>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <button onclick="this.style.background='#10b981'; this.style.color='#000'" class="px-4 py-2 rounded-full border border-slate-700 bg-slate-900 hover:border-emerald-400">A. Dekomposisi</button>
+                            <button class="px-4 py-2 rounded-full border border-slate-700 bg-slate-900">B. Algoritma</button>
+                            <button class="px-4 py-2 rounded-full border border-slate-700 bg-slate-900">C. Abstraksi</button>
+                        </div>
+                    </div>
+                `
+            }
+        ]
+    },
+    3: {
+        title: "Level 3: Materi",
+        minutes: 15,
+        hasTimer: false,
+        slides: [
+            {
+                subtitle: "LEVEL 3 • MATERI UTAMA",
+                heading: "Empat Pilar Berpikir Komputasional",
+                body: `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-4xl text-left">
+                        <div class="p-5 bg-slate-950 rounded-2xl border-t-4 border-emerald-400">
+                            <b class="text-emerald-400 font-display text-base">Dekomposisi</b>
+                            <p class="text-xs text-slate-400 mt-1">Memecah job sheet menjadi potongan tahap potong, cekam, bubut, ukur.</p>
+                        </div>
+                        <div class="p-5 bg-slate-950 rounded-2xl border-t-4 border-cyan-400">
+                            <b class="text-cyan-400 font-display text-base">Pengenalan Pola</b>
+                            <p class="text-xs text-slate-400 mt-1">Poros & baut punya alur dasar sama, beda di pembuat ulir.</p>
+                        </div>
+                        <div class="p-5 bg-slate-950 rounded-2xl border-t-4 border-amber-400">
+                            <b class="text-amber-400 font-display text-base">Abstraksi</b>
+                            <p class="text-xs text-slate-400 mt-1">Fokus pada diameter & toleransi, abaikan warna cet mesin.</p>
+                        </div>
+                        <div class="p-5 bg-slate-950 rounded-2xl border-t-4 border-pink-400">
+                            <b class="text-pink-400 font-display text-base">Algoritma SOP</b>
+                            <p class="text-xs text-slate-400 mt-1">Menyusun urutan langkah pengerjaan yang logis & K3LH.</p>
+                        </div>
+                    </div>
+                `
+            }
+        ]
+    },
+    4: {
+        title: "Level 4: LKM",
+        minutes: 30,
+        hasTimer: true,
+        slides: [
+            {
+                subtitle: "LEVEL 4 • TANTANGAN KELOMPOK",
+                heading: "SOP Algoritma Poros Bertingkat",
+                lead: "Susun tahap pembuatan poros bertingkat dengan urutan yang benar.",
+                body: `
+                    <div class="gg-card p-6 rounded-3xl max-w-2xl mx-auto space-y-4 text-left">
+                        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-amber-300">
+                            1. Potong Bahan ➔ 2. Pasang di Chuck ➔ 3. Bubut Muka ➔ 4. Bubut Bertingkat ➔ 5. Ukur Jangka Sorong
+                        </div>
+                    </div>
+                `
+            }
+        ]
+    },
+    5: {
+        title: "Level 5: Post-test & Refleksi",
+        minutes: 15,
+        hasTimer: true,
+        slides: [
+            {
+                subtitle: "LEVEL 5 • EVALUASI MISI",
+                heading: "Post-Test & Refleksi Misi",
+                lead: "Buktikan penguasaan materimu setelah seluruh rangkaian pembelajaran.",
+                body: `
+                    <div class="space-y-4 max-w-xl mx-auto">
+                        ${shaftSVG(6)}
+                        <div class="p-4 bg-emerald-950/40 border border-emerald-400/40 rounded-2xl text-emerald-300 text-xs font-bold">
+                            🎉 Selamat! Misi Pembelajaran Berpikir Komputasional Selesai.
+                        </div>
+                    </div>
+                `
+            }
+        ]
+    }
 };
-$("#ts").onclick = () => {
-  clearInterval(tmr); left = LV[cur].m * 60; $("#ts").textContent = "Ulangi timer";
-  const t = $("#tm"); t.classList.remove("w");
-  tmr = setInterval(() => {
-    left--; t.textContent = left > 0 ? fmt(left) : "Waktu habis"; t.classList.toggle("w", left <= 60);
-    if (left <= 0) clearInterval(tmr);
-  }, 1000);
-};
-document.addEventListener("keydown", e => {
-  if ($("#stage").hidden || dlg.open) return;
-  if (e.key === "ArrowRight") $("#next").click();
-  else if (e.key === "ArrowLeft") $("#prev").click();
-  else if (e.key === "Escape") closeLv();
-});
 
-/* ===== Dialog: level terkunci dan Mode Penguji ===== */
-$("#dx").onclick = () => dlg.close();
-function lock(i) {
-  $("#dc").innerHTML = `<h3>Level ${i + 1}: ${LV[i].t}</h3><p>Selesaikan level sebelumnya dulu, atau masukkan kode dari guru.</p><input id="lc" placeholder="Kode level" autocomplete="off"><button class="btn" id="lb">Buka</button><p class="fb no" id="le" role="status"></p>`;
-  dlg.showModal();
-  const t = () => {
-    if ($("#lc").value.trim().toUpperCase() === CFG.codes[i]) { un.add(i); sv(); dlg.close(); drawMap(); go(i); }
-    else $("#le").textContent = "Kode belum tepat.";
-  };
-  $("#lb").onclick = t; $("#lc").onkeydown = e => { if (e.key === "Enter") t(); };
-}
-$("#guru").onclick = () => {
-  $("#dc").innerHTML = `<h3>Mode Penguji UKIN</h3><p>Ringkasan alur dan akses ke semua level tanpa kode.</p><table><tr><th>Level</th><th>Menit</th><th>Sintaks PBL (draf)</th><th>Kode</th></tr>${LV.map((l, i) => `<tr><td>${i + 1}. ${l.t}</td><td>${l.m}</td><td>${l.s}</td><td>${CFG.codes[i] || "Terbuka"}</td></tr>`).join("")}<tr><th>Total</th><th>90</th><th colspan="2"></th></tr></table><button class="btn" id="all">Buka semua level</button> <button class="btn g" id="rs">Kunci ulang</button>`;
-  dlg.showModal();
-  $("#all").onclick = () => { LV.forEach((_, i) => un.add(i)); sv(); drawMap(); dlg.close(); };
-  $("#rs").onclick = () => { un.clear(); un.add(0); sv(); carAt = -1; carD = 0; label(); setCar(0); drawMap(); dlg.close(); };
+window.onload = function() {
+    lucide.createIcons();
+    initSVGDistances();
+    updateLockVisuals();
 };
 
-/* ===== Mulai ===== */
-function start() {
-  initDist();
-  const mx = Math.max(...un);
-  carAt = mx > 0 ? mx : -1;
-  carD = dist[carAt < 0 ? 0 : carAt + 1];
-  setCar(carD); label(); drawMap();
+function switchView(viewName) {
+    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+    document.getElementById(`view-${viewName}`).classList.remove('hidden');
+
+    ['roadmap', 'materi', 'lkm'].forEach(name => {
+        const btn = document.getElementById(`nav-btn-${name}`);
+        if (name === viewName) {
+            btn.className = "px-3.5 py-1.5 rounded-xl font-bold bg-amber-400 text-slate-950 transition flex items-center space-x-1.5";
+        } else {
+            btn.className = "px-3.5 py-1.5 rounded-xl font-bold text-slate-400 hover:text-white transition flex items-center space-x-1.5";
+        }
+    });
 }
-start();
-addEventListener("resize", () => setCar(carD));
-addEventListener("load", () => { initDist(); setCar(carD); });
+
+function handleStageClick(stageNum) {
+    if (!unlockedStages.has(stageNum)) {
+        showToast(`🔒 Stage 0${stageNum} Terkunci! Selesaikan Stage 0${stageNum - 1} terlebih dahulu.`);
+        return;
+    }
+    currentStage = stageNum;
+    currentSubSlideIndex = 0;
+    animateCarToDistance(nodeDistances[stageNum], 1100);
+    document.getElementById('current-car-stage-label').innerText = `Stage 0${stageNum}`;
+
+    setTimeout(() => {
+        openFullscreenSlide(stageNum);
+    }, 1000);
+}
+
+/* FULLSCREEN PRESENTATION SLIDE ENGINE */
+function openFullscreenSlide(stageNum) {
+    const stageData = stageSlides[stageNum];
+    if (!stageData) return;
+
+    document.getElementById('slide-stage-title').innerText = stageData.title;
+    document.getElementById('stage-fullscreen').classList.remove('hidden');
+
+    const timerBox = document.getElementById('slide-timer-box');
+    if (stageData.hasTimer) {
+        timerBox.style.display = "flex";
+        timerSecondsLeft = stageData.minutes * 60;
+        updateTimerDisplay();
+    } else {
+        timerBox.style.display = "none";
+    }
+
+    renderSubSlide();
+}
+
+function renderSubSlide() {
+    const stageData = stageSlides[currentStage];
+    const slides = stageData.slides;
+    const currentSlide = slides[currentSubSlideIndex];
+
+    // Segmented Progress Bar rendering (Match screenshot top green bars)
+    const segBox = document.getElementById('slide-segmented-progress');
+    segBox.innerHTML = slides.map((_, i) => `
+        <div class="h-1.5 flex-1 rounded-full transition-all duration-300 ${i <= currentSubSlideIndex ? 'bg-emerald-400 shadow-[0_0_10px_#10b981]' : 'bg-slate-800'}"></div>
+    `).join("");
+
+    // Slide Content rendering
+    const viewport = document.getElementById('slide-viewport');
+    viewport.innerHTML = `
+        <div class="slide-content text-center max-w-4xl mx-auto space-y-4 animate-fade-in">
+            ${currentSlide.subtitle ? `<p class="text-xs font-mono font-extrabold text-emerald-400 tracking-widest uppercase">${currentSlide.subtitle}</p>` : ''}
+            ${currentSlide.heading ? `<h2 class="font-display font-black text-3xl sm:text-5xl text-white tracking-tight">${currentSlide.heading}</h2>` : ''}
+            ${currentSlide.lead ? `<p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">${currentSlide.lead}</p>` : ''}
+            ${currentSlide.body ? currentSlide.body : ''}
+        </div>
+    `;
+
+    // Update Bottom Nav Buttons
+    const btnPrev = document.getElementById('btn-slide-prev');
+    const btnNext = document.getElementById('btn-slide-next');
+
+    btnPrev.disabled = (currentSubSlideIndex === 0);
+    btnPrev.style.opacity = (currentSubSlideIndex === 0) ? "0.4" : "1";
+
+    if (currentSubSlideIndex < slides.length - 1) {
+        btnNext.innerHTML = `<span>Lanjut →</span>`;
+    } else {
+        if (currentStage < 5) {
+            btnNext.innerHTML = `<span>Lanjut ke level ${currentStage + 1} →</span>`;
+        } else {
+            btnNext.innerHTML = `<span>Selesai Misi ✓</span>`;
+        }
+    }
+
+    lucide.createIcons();
+}
+
+function nextSubSlide() {
+    const slides = stageSlides[currentStage].slides;
+    if (currentSubSlideIndex < slides.length - 1) {
+        currentSubSlideIndex++;
+        renderSubSlide();
+    } else {
+        // Unlock next stage
+        const nextStage = currentStage + 1;
+        if (nextStage <= 5) {
+            unlockedStages.add(nextStage);
+            updateLockVisuals();
+            closeFullscreenSlide();
+            handleStageClick(nextStage);
+        } else {
+            closeFullscreenSlide();
+            showToast("Selamat! Seluruh Misi Pembelajaran Selesai 🎉");
+        }
+    }
+}
+
+function prevSubSlide() {
+    if (currentSubSlideIndex > 0) {
+        currentSubSlideIndex--;
+        renderSubSlide();
+    }
+}
+
+function closeFullscreenSlide() {
+    clearInterval(timerInterval);
+    document.getElementById('stage-fullscreen').classList.add('hidden');
+}
+
+function toggleSlideTimer() {
+    const btn = document.getElementById('slide-timer-btn');
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        btn.innerText = "Mulai timer";
+    } else {
+        btn.innerText = "Hentikan timer";
+        timerInterval = setInterval(() => {
+            timerSecondsLeft--;
+            updateTimerDisplay();
+            if (timerSecondsLeft <= 0) {
+                clearInterval(timerInterval);
+                showToast("Waktu Pengerjaan Habis!");
+            }
+        }, 1000);
+    }
+}
+
+function updateTimerDisplay() {
+    const m = String(Math.floor(timerSecondsLeft / 60)).padStart(2, '0');
+    const s = String(timerSecondsLeft % 60).padStart(2, '0');
+    document.getElementById('slide-timer-val').innerText = `${m}:${s}`;
+}
+
+function updateLockVisuals() {
+    for (let i = 2; i <= 5; i++) {
+        const btn = document.getElementById(`node-btn-${i}`);
+        const card = document.getElementById(`card-stage-${i}`);
+        const badge = document.getElementById(`badge-lock-${i}`);
+
+        if (unlockedStages.has(i)) {
+            btn.className = "w-16 h-16 rounded-full bg-slate-950 border-4 border-amber-400 text-amber-400 font-display font-black text-xl flex items-center justify-center shadow-2xl glow-yellow transform hover:scale-110 transition cursor-pointer opacity-100";
+            btn.innerText = `0${i}`;
+            card.classList.remove('opacity-60', 'border-slate-800');
+            card.classList.add('border-amber-400/40');
+            badge.innerText = "TERBUKA";
+            badge.className = "text-xs font-mono text-amber-400 font-bold";
+        } else {
+            btn.className = "w-16 h-16 rounded-full bg-slate-950 border-4 border-slate-700 text-slate-500 font-display font-black text-xl flex items-center justify-center shadow-2xl transition opacity-60";
+            btn.innerText = "🔒";
+            card.classList.add('opacity-60', 'border-slate-800');
+            badge.innerText = "TERKUNCI 🔒";
+            badge.className = "text-xs font-mono text-slate-500";
+        }
+    }
+}
+
+function initSVGDistances() {
+    const path = document.getElementById('winding-path');
+    if (!path) return;
+    const total = path.getTotalLength();
+    nodeDistances = [0];
+    for (let n = 1; n < nodeCoordinates.length; n++) {
+        const target = nodeCoordinates[n];
+        let minDist = Infinity, bestL = 0;
+        for (let l = 0; l <= total; l += 4) {
+            const p = path.getPointAtLength(l);
+            const dist = Math.hypot(p.x - target.x, p.y - target.y);
+            if (dist < minDist) { minDist = dist; bestL = l; }
+        }
+        nodeDistances.push(bestL);
+    }
+}
+
+function nextStageWithCar() {
+    let next = currentStage + 1;
+    if (next > 5) next = 1;
+    handleStageClick(next);
+}
+
+function animateCarToDistance(targetDist, duration = 1100) {
+    cancelAnimationFrame(animReqId);
+    const startDist = currentCarDistance;
+    const startTime = performance.now();
+
+    function step(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        currentCarDistance = startDist + (targetDist - startDist) * ease;
+        renderCarPosition(currentCarDistance);
+        if (progress < 1) animReqId = requestAnimationFrame(step);
+    }
+    animReqId = requestAnimationFrame(step);
+}
+
+function renderCarPosition(dist) {
+    const path = document.getElementById('winding-path');
+    if (!path) return;
+    const p = path.getPointAtLength(dist);
+    const pNext = path.getPointAtLength(Math.min(dist + 3, path.getTotalLength()));
+    const angle = Math.atan2(pNext.y - p.y, pNext.x - p.x) * (180 / Math.PI) + 90;
+    const car = document.getElementById('car-avatar');
+    if (car) car.setAttribute('transform', `translate(${p.x}, ${p.y}) rotate(${angle})`);
+}
+
+function openRPPModal() { document.getElementById('rpp-modal').classList.remove('hidden'); }
+function closeRPPModal() { document.getElementById('rpp-modal').classList.add('hidden'); }
+
+function showToast(msg) {
+    const t = document.createElement('div');
+    t.className = 'fixed bottom-5 right-5 z-50 px-4 py-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold text-xs shadow-2xl flex items-center space-x-2';
+    t.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i><span>${msg}</span>`;
+    document.body.appendChild(t);
+    lucide.createIcons();
+    setTimeout(() => t.remove(), 2500);
+}
