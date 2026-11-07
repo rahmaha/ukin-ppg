@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PERMESINAN.gg: Misi Berpikir Komputasional</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Outfit:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <span class="brand">PERMESINAN<b>.gg</b></span>
+  <button class="btn g" id="guru">Mode Penguji UKIN</button>
+</header>
+
+<section class="hero">
+  <span class="pill mono"><i></i>Informatika kelas X Teknik Permesinan</span>
+  <h1>Berpikir Komputasional <b>Pemesinan</b></h1>
+  <p>Pecahkan masalah seperti seorang teknisi: pecah menjadi bagian kecil, kenali pola, pilih yang penting, lalu susun langkahnya. Ketuk level pada jalur untuk meluncurkan mobil.</p>
+  <span class="where mono">Posisi mobil: <b id="carlab">Start</b></span>
+</section>
+
+<section class="roadwrap">
+  <div class="roadmap" id="roadmap">
+    <svg viewBox="0 0 900 2160" aria-hidden="true">
+      <path class="tb" d="M450 40C180 40 180 240 220 240C320 240 680 360 680 570C680 780 220 760 220 900C220 1050 680 1100 680 1230C680 1380 220 1400 220 1560C220 1720 680 1740 680 1890C680 2000 450 2000 450 2080"/>
+      <path id="road" class="tfl" d="M450 40C180 40 180 240 220 240C320 240 680 360 680 570C680 780 220 760 220 900C220 1050 680 1100 680 1230C680 1380 220 1400 220 1560C220 1720 680 1740 680 1890C680 2000 450 2000 450 2080"/>
+      <path class="tl" d="M450 40C180 40 180 240 220 240C320 240 680 360 680 570C680 780 220 760 220 900C220 1050 680 1100 680 1230C680 1380 220 1400 220 1560C220 1720 680 1740 680 1890C680 2000 450 2000 450 2080"/>
+      <g id="car" transform="translate(450,40) rotate(0)">
+        <circle r="30" fill="#facc15" class="ping"/>
+        <rect x="-14" y="-22" width="28" height="44" rx="8" fill="#090a0f" opacity=".6"/>
+        <path d="M-10,-18L10,-18L8,18L-8,18Z" fill="#facc15" stroke="#090a0f" stroke-width="2"/>
+        <rect x="-15" y="-22" width="30" height="6" rx="2" fill="#06b6d4"/>
+        <rect x="-14" y="16" width="28" height="6" rx="2" fill="#ff498b"/>
+        <circle cx="0" cy="-2" r="5" fill="#090a0f"/><circle cx="0" cy="-2" r="3" fill="#10b981"/>
+        <rect x="-16" y="-18" width="5" height="10" rx="2" fill="#e2e8f0"/><rect x="11" y="-18" width="5" height="10" rx="2" fill="#e2e8f0"/>
+        <rect x="-16" y="8" width="5" height="10" rx="2" fill="#e2e8f0"/><rect x="11" y="8" width="5" height="10" rx="2" fill="#e2e8f0"/>
+        <polygon points="-6,-22 0,-34 6,-22" fill="#facc15" opacity=".7"/>
+      </g>
+    </svg>
+    <div id="nodes"></div>
+  </div>
+</section>
+<p class="foot">Berpikir komputasional, 90 menit, enam level.</p>
+
+<div id="stage" hidden>
+  <div class="sbar">
+    <button class="btn g" id="x">← Peta</button>
+    <h2 id="st"></h2>
+    <span class="tm" id="tm"></span>
+    <button class="btn g" id="ts">Mulai timer</button>
+  </div>
+  <div class="dots" id="dots"></div>
+  <div id="stb"></div>
+  <div class="sf">
+    <button class="btn g" id="prev">← Kembali</button>
+    <button class="btn" id="next">Lanjut →</button>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <div id="dc"></div>
+  <p><button class="btn g" id="dx">Tutup</button></p>
+</dialog>
+
+<script src="script.js"></script>
+</body>
+</html>
